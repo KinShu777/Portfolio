@@ -25,11 +25,16 @@ export interface TrackInfo {
 }
 
 export interface RadioStation {
+  id?: string;
   frequency: string;
   name: string;
   genre: string;
   tag: string;
   color: string;
+  country?: string;
+  streamUrl?: string;
+  format?: string;
+  description?: string;
   tracks: TrackInfo[];
   synthPreset: 'lofi' | 'ambient' | 'synthwave' | 'retro-fm';
 }

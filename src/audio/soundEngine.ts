@@ -12,6 +12,8 @@ class RetroSoundEngine {
   private isRadioPlaying: boolean = false;
   private proceduralRadioTimer: number | null = null;
   private proceduralOscillators: OscillatorNode[] = [];
+  private radioStatus: 'stopped' | 'connecting' | 'live' | 'fallback' = 'stopped';
+  private onRadioStatusListeners: Set<(status: 'stopped' | 'connecting' | 'live' | 'fallback') => void> = new Set();
 
   constructor() {
     // AudioContext will be initialized on first user interaction
@@ -51,6 +53,9 @@ class RetroSoundEngine {
   public toggleMute(): boolean {
     this.isMuted = !this.isMuted;
     this.setVolume(this.volume);
+    if (this.radioAudioElement) {
+      this.radioAudioElement.muted = this.isMuted;
+    }
     return this.isMuted;
   }
 
@@ -291,30 +296,119 @@ class RetroSoundEngine {
   }
 
   // --- 7. High-Level Radio Play / Pause / Station Switch ---
+  public getRadioStatus(): 'stopped' | 'connecting' | 'live' | 'fallback' {
+    return this.radioStatus;
+  }
+
+  public subscribeRadioStatus(listener: (status: 'stopped' | 'connecting' | 'live' | 'fallback') => void): () => void {
+    this.onRadioStatusListeners.add(listener);
+    listener(this.radioStatus);
+    return () => {
+      this.onRadioStatusListeners.delete(listener);
+    };
+  }
+
+  private setRadioStatus(status: 'stopped' | 'connecting' | 'live' | 'fallback') {
+    this.radioStatus = status;
+    this.onRadioStatusListeners.forEach((listener) => {
+      try {
+        listener(status);
+      } catch {
+        // ignore listener error
+      }
+    });
+  }
+
   public playRadioTrack(src?: string, synthPreset: string = 'lofi') {
     this.isRadioPlaying = true;
     this.initContext();
 
-    if (src) {
+    // Silence any previous procedural synthesizer immediately
+    this.stopProceduralRadio();
+
+    // Clean up previous stream playback to prevent duplicate audio
+    if (this.radioAudioElement) {
+      try {
+        this.radioAudioElement.pause();
+        this.radioAudioElement.onplaying = null;
+        this.radioAudioElement.onerror = null;
+        this.radioAudioElement.onwaiting = null;
+        this.radioAudioElement.src = '';
+      } catch {
+        // ignore reset errors
+      }
+    }
+
+    if (src && src.trim().length > 0) {
+      this.setRadioStatus('connecting');
+
       if (!this.radioAudioElement) {
         this.radioAudioElement = new Audio();
-        this.radioAudioElement.loop = true;
       }
-      this.radioAudioElement.src = src;
+
+      this.radioAudioElement.loop = false;
       this.radioAudioElement.volume = this.isMuted ? 0 : this.volume;
-      this.radioAudioElement.play().catch(() => {
-        // Autoplay policy or 404 on local file -> fallback to procedural synthesizer!
+      this.radioAudioElement.muted = this.isMuted;
+
+      let fallbackTriggered = false;
+      const triggerFallback = () => {
+        if (!this.isRadioPlaying || fallbackTriggered) return;
+        fallbackTriggered = true;
+        if (this.radioAudioElement) {
+          try {
+            this.radioAudioElement.pause();
+            this.radioAudioElement.onplaying = null;
+            this.radioAudioElement.onerror = null;
+            this.radioAudioElement.onwaiting = null;
+            this.radioAudioElement.src = '';
+          } catch {
+            // ignore
+          }
+        }
+        this.setRadioStatus('fallback');
         this.startProceduralRadio(synthPreset);
-      });
+      };
+
+      this.radioAudioElement.onplaying = () => {
+        if (this.isRadioPlaying && !fallbackTriggered) {
+          this.setRadioStatus('live');
+          this.stopProceduralRadio();
+        }
+      };
+
+      this.radioAudioElement.onerror = () => {
+        triggerFallback();
+      };
+
+      this.radioAudioElement.src = src;
+      this.radioAudioElement.load();
+
+      const playPromise = this.radioAudioElement.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Playback rejected (e.g. autoplay restriction, CORS or stream down) -> auto fallback!
+          triggerFallback();
+        });
+      }
     } else {
+      this.setRadioStatus('fallback');
       this.startProceduralRadio(synthPreset);
     }
   }
 
   public pauseRadio() {
     this.isRadioPlaying = false;
+    this.setRadioStatus('stopped');
     if (this.radioAudioElement) {
-      this.radioAudioElement.pause();
+      try {
+        this.radioAudioElement.pause();
+        this.radioAudioElement.onplaying = null;
+        this.radioAudioElement.onerror = null;
+        this.radioAudioElement.onwaiting = null;
+        this.radioAudioElement.src = '';
+      } catch {
+        // ignore
+      }
     }
     this.stopProceduralRadio();
   }

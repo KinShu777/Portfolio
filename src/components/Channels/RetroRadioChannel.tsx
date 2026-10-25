@@ -12,6 +12,7 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
   const [stationIndex, setStationIndex] = useState(0);
   const [trackIndex, setTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [radioStatus, setRadioStatus] = useState<'stopped' | 'connecting' | 'live' | 'fallback'>('stopped');
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
 
@@ -21,6 +22,22 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
   useEffect(() => {
     setIsMuted(soundEngine.getIsMuted());
     setVolume(soundEngine.getVolume());
+    setIsPlaying(soundEngine.isRadioActive());
+
+    const unsubscribe = soundEngine.subscribeRadioStatus((status) => {
+      setRadioStatus(status);
+      if (status === 'stopped') {
+        setIsPlaying(false);
+      } else {
+        setIsPlaying(true);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      // Surgical cleanup: pause radio stream when navigating away from Channel 03
+      soundEngine.pauseRadio();
+    };
   }, []);
 
   const handleStationChange = (newIdx: number) => {
@@ -31,8 +48,8 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
 
     if (isPlaying) {
       const nextStation = radioStations[validIdx];
-      const nextTrack = nextStation.tracks[0];
-      soundEngine.playRadioTrack(nextTrack?.src, nextStation.synthPreset);
+      const streamSrc = nextStation.streamUrl || nextStation.tracks[0]?.src;
+      soundEngine.playRadioTrack(streamSrc, nextStation.synthPreset);
     }
   };
 
@@ -42,7 +59,8 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
       soundEngine.pauseRadio();
       setIsPlaying(false);
     } else {
-      soundEngine.playRadioTrack(currentTrack?.src, currentStation.synthPreset);
+      const streamSrc = currentStation.streamUrl || currentTrack?.src;
+      soundEngine.playRadioTrack(streamSrc, currentStation.synthPreset);
       setIsPlaying(true);
     }
   };
@@ -242,31 +260,46 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
               </div>
 
               {/* Status & Now Playing */}
-              <div style={{ textAlign: 'right' }}>
+              <div style={{ textAlign: 'right', maxWidth: '360px' }}>
                 <div style={{
                   fontFamily: 'var(--font-telemetry)',
                   fontSize: '0.65rem',
-                  color: isPlaying ? '#00e575' : '#e63946',
+                  color: !isPlaying
+                    ? '#e63946'
+                    : radioStatus === 'live'
+                    ? '#00e575'
+                    : radioStatus === 'fallback'
+                    ? '#ffb703'
+                    : '#00d2ff',
                   fontWeight: 700,
                   letterSpacing: '0.1em'
                 }}>
-                  {isPlaying ? '● TUNED // AUDIO ACTIVE' : '○ STANDBY // MUTED'}
+                  {!isPlaying
+                    ? '○ STANDBY // RECEIVER OFF'
+                    : radioStatus === 'live'
+                    ? '● LIVE // ONLINE BROADCAST'
+                    : radioStatus === 'fallback'
+                    ? '▲ SIGNAL LOST // LOCAL SYNTH FALLBACK'
+                    : '◌ TUNING // CONNECTING TO STREAM...'}
                 </div>
                 <div style={{
                   fontFamily: 'var(--font-telemetry)',
                   fontSize: '0.85rem',
                   color: '#ffb703',
                   fontWeight: 600,
-                  marginTop: '4px'
+                  marginTop: '4px',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
                 }}>
-                  {currentTrack.title}
+                  {currentStation.description || currentTrack.title}
                 </div>
                 <div style={{
                   fontFamily: 'var(--font-telemetry)',
                   fontSize: '0.72rem',
                   color: '#94a3b8'
                 }}>
-                  {currentTrack.artist} ({currentTrack.duration})
+                  {currentTrack.artist} // {currentStation.country ? currentStation.country.toUpperCase() : 'INDIA'} // {currentTrack.duration}
                 </div>
               </div>
             </div>
@@ -394,7 +427,7 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
             </div>
           </div>
 
-          {/* Audio Configuration Guide Callout */}
+          {/* Retro Receiver Info Callout */}
           <div style={{
             backgroundColor: '#0a1017',
             border: '1px dashed #24354c',
@@ -405,13 +438,13 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
             color: '#7fa4cd',
             lineHeight: 1.5
           }}>
-            <strong style={{ color: '#ffffff' }}>HOW TO ADD YOUR LOCAL MP3 TRACKS:</strong>
+            <strong style={{ color: '#ffffff' }}>AUTHENTIC INTERNET RADIO RECEIVER:</strong>
             <br />
-            1. Copy your audio files into <code style={{ color: '#00e575' }}>public/audio/</code> (e.g. <code style={{ color: '#00e575' }}>public/audio/song01.mp3</code>).
+            1. Tunes live online radio streams specializing in Indian retro & Bollywood golden age classics.
             <br />
-            2. Edit <code style={{ color: '#00e575' }}>src/config/radioStations.ts</code> to match your track names and paths.
+            2. Integrated with CRT TV chassis physical volume knob, mute button, and channel tuner.
             <br />
-            <em>Note: When no MP3 file is present, the built-in procedural Web Audio synthesizer automatically generates atmospheric retro frequencies!</em>
+            <em>Note: In the event of network dropouts or stream unreachability, the system automatically falls back to local procedural Web Audio synthesis.</em>
           </div>
         </div>
       </div>
