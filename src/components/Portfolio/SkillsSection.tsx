@@ -36,11 +36,14 @@ export const SkillsSection: React.FC = () => {
         ACTIVE & APPLIED TOOLING SPECTRUM // CONTEXTUAL FAMILIARITY
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '1.5rem'
-      }}>
+      <div
+        className="crt-section-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.5rem'
+        }}
+      >
         {portfolioData.skills.map((category, idx) => (
           <div
             key={idx}

@@ -26,11 +26,14 @@ export const AboutSection: React.FC = () => {
         </h2>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '1.5rem'
-      }}>
+      <div
+        className="crt-section-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '1.5rem'
+        }}
+      >
         {/* Terminal Log Console */}
         <div style={{
           backgroundColor: '#040d0a',

@@ -947,66 +947,239 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 }
 
 /* ==========================================================================
-   RESPONSIVE LAYOUTS (Desktop, Tablet, Mobile)
+   MOBILE & TABLET RESPONSIVE OVERRIDES (<= 768px)
+   Adapts the CRT television for mobile devices without changing desktop layout.
    ========================================================================== */
 
-@media (max-width: 900px) {
-  .crt-apparatus-wrapper {
-    padding: 4px;
+@media (max-width: 768px) {
+  /* Prevent mobile browser toolbar jumps */
+  html, body {
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
   }
 
+  .crt-viewport-container {
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .crt-apparatus-wrapper {
+    padding: 4px;
+    height: 100%;
+    max-height: 100dvh;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  /* CRT Television Cabinet - Stacked Layout: Screen on Top, Controls Below */
   .crt-cabinet {
     width: calc(100vw - 8px);
-    height: calc(100vh - 8px);
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
-    padding: 10px;
-    gap: 8px;
+    height: calc(100dvh - 8px);
+    max-width: 100vw;
+    max-height: calc(100dvh - 8px);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding: 8px 8px 6px;
+    gap: 6px;
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+
+  .crt-cabinet::before {
     border-radius: 14px;
   }
 
-  .crt-hardware-panel {
-    flex-direction: row;
+  /* Top ventilation slots scaled down */
+  .crt-cabinet-vents {
+    top: 3px;
+    left: 15%;
+    right: 15%;
+    height: 4px;
+    gap: 3px;
+  }
+
+  .crt-vent-slit {
+    width: 20px;
+    height: 2px;
+  }
+
+  /* Bottom feet scaled down */
+  .crt-stand {
+    bottom: -8px;
+    left: 12%;
+    right: 12%;
+    height: 8px;
+  }
+
+  .crt-foot {
+    width: 50px;
+    border-radius: 0 0 6px 6px;
+  }
+
+  /* CRT Screen Housing & Glass Frame */
+  .crt-screen-bezel {
+    min-width: 0;
+    min-height: 0;
+    padding: 6px;
+    border-radius: 12px;
+  }
+
+  .crt-screen-glass {
+    min-width: 0;
+    min-height: 0;
+    border-radius: 9px;
+  }
+
+  .crt-glass-overlay {
+    border-radius: 9px;
+  }
+
+  .crt-scroll-container {
+    min-width: 0;
+    min-height: 0;
     width: 100%;
-    padding: 6px 8px;
-    justify-content: space-around;
+    height: 100%;
+  }
+
+  /* Physical TV Hardware Control Console (Positioned Below CRT Screen) */
+  .crt-hardware-panel {
+    display: flex;
+    flex-direction: row;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
     height: auto;
+    padding: 4px 6px;
+    border-radius: 8px;
+    gap: 4px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .crt-control-group {
-    padding: 0 2px;
+  .crt-hardware-panel::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Brand Plate */
+  .crt-brand-emblem {
     width: auto;
+    padding: 0 4px;
+    border-bottom: none;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
-  .crt-dial-container {
-    width: 60px;
-    height: 60px;
+  .crt-brand-dot {
+    width: 4px;
+    height: 4px;
   }
 
-  .crt-vintage-knob {
-    width: 44px;
-    height: 44px;
+  /* Control groups */
+  .crt-control-group {
+    width: auto;
+    padding: 0;
+    flex-shrink: 0;
   }
 
-  .knob-metallic-face {
+  /* Power Button */
+  .crt-power-group {
+    padding-top: 0;
+  }
+
+  .power-btn-outer-bezel {
     width: 38px;
     height: 38px;
   }
 
-  .power-btn-outer-bezel {
-    width: 42px;
-    height: 42px;
-  }
-
   .power-btn-inner-ring {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
   }
 
   .power-btn-cap {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .power-symbol-svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* Knobs & Dials */
+  .crt-dial-container {
+    width: 54px;
+    height: 54px;
+  }
+
+  .crt-vintage-knob {
+    width: 38px;
+    height: 38px;
+  }
+
+  .knob-knurled-skirt {
+    inset: -2px;
+  }
+
+  .knob-metallic-face {
+    width: 32px;
+    height: 32px;
+  }
+
+  .knob-crossbar-pointer {
+    top: 3px;
+    width: 4px;
+    height: 11px;
+  }
+
+  .channel-metallic-face .knob-label-engraved,
+  .vol-label-engraved {
+    font-size: 0.4rem;
+    margin-top: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  /* Channel tick numbers */
+  .channel-num {
+    font-size: 0.42rem;
+  }
+  .channel-num.num-1 { top: 2px; left: 8px; }
+  .channel-num.num-2 { top: 0px; left: 50%; transform: translateX(-50%); }
+  .channel-num.num-3 { top: 2px; right: 8px; }
+  .channel-num.num-4 { top: 15px; right: 2px; }
+
+  /* Volume dial tick marks */
+  .vol-indicator-notch {
+    top: 3px;
+    width: 2.5px;
+    height: 9px;
+  }
+
+  .vol-tick-line {
+    margin-top: -24px;
+    height: 4px;
+    width: 1.2px;
+  }
+
+  .vol-scale-num {
+    font-size: 0.42rem;
+  }
+  .scale-0 { bottom: 2px; left: 6px; }
+  .scale-11 { bottom: 2px; right: 4px; }
+
+  /* Radio Pushbutton */
+  .crt-radio-group {
+    padding: 0;
   }
 
   .crt-vintage-radio-btn {
@@ -1015,35 +1188,207 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 
   .vintage-switch-collar {
     padding: 4px 6px;
+    border-radius: 4px;
+    gap: 4px;
   }
 
+  .vintage-switch-cap {
+    font-size: 0.58rem;
+    letter-spacing: 0.05em;
+    gap: 3px;
+  }
+
+  .vintage-switch-indicator {
+    width: 5px;
+    height: 5px;
+  }
+
+  /* Speaker grille - hide on mobile to give knobs ample breathing space */
   .crt-speaker-grille {
     display: none;
   }
 
+  /* CRT ADJ Button & Calibration Modal */
   .crt-bottom-cluster {
     width: auto;
     border-top: none;
     padding-top: 0;
+    flex-shrink: 0;
+  }
+
+  .crt-vintage-adj-btn {
+    padding: 5px 8px;
+    font-size: 0.56rem;
+  }
+
+  .crt-calibration-popover {
+    right: 0 !important;
+    bottom: calc(100% + 6px) !important;
+    max-width: min(240px, calc(100vw - 28px)) !important;
+  }
+
+  /* In-Screen Broadcast HUD / Navigation Ribbon */
+  .crt-broadcast-hud {
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    padding: 6px 10px;
+  }
+
+  .crt-broadcast-hud nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 2px 0 3px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    display: flex;
+    gap: 6px;
+  }
+
+  .crt-broadcast-hud nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* General in-screen content responsiveness */
+  .crt-scroll-container section {
+    padding: 1.2rem 0.85rem !important;
+  }
+
+  .crt-section-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .home-action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .home-action-buttons button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .project-category-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .project-category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .project-modal-card {
+    max-width: calc(100vw - 28px) !important;
+    max-height: 85dvh !important;
+    overflow-y: auto !important;
+    padding: 1.1rem !important;
+  }
+
+  .radio-tuner-unit {
+    padding: 1rem !important;
+    gap: 1rem !important;
+    border-radius: 12px !important;
+  }
+
+  .radio-vfd-display {
+    padding: 10px 12px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .radio-vfd-display > div:last-child {
+    text-align: left !important;
+  }
+
+  .radio-transport-row {
+    flex-direction: column;
+    gap: 8px !important;
+  }
+
+  .radio-transport-row > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .radio-transport-row button {
+    flex: 1;
+    justify-content: center;
   }
 }
 
-@media (max-width: 600px) {
+/* Specific micro-screen tuning for phones <= 400px (e.g. 390px, 360px) */
+@media (max-width: 400px) {
   .crt-cabinet {
-    padding: 8px;
+    padding: 6px 6px 4px;
+    gap: 4px;
   }
 
   .crt-screen-bezel {
-    border-radius: 12px;
-    padding: 8px;
+    padding: 4px;
   }
 
-  .crt-screen-glass {
-    border-radius: 10px;
+  .crt-hardware-panel {
+    padding: 3px 4px;
+    gap: 3px;
   }
 
-  .crt-panel-section-label {
-    display: none;
+  .crt-brand-emblem {
+    font-size: 0.55rem;
+    padding: 0 2px;
+  }
+
+  .power-btn-outer-bezel {
+    width: 35px;
+    height: 35px;
+  }
+
+  .power-btn-inner-ring {
+    width: 27px;
+    height: 27px;
+  }
+
+  .power-btn-cap {
+    width: 21px;
+    height: 21px;
+  }
+
+  .crt-dial-container {
+    width: 48px;
+    height: 48px;
+  }
+
+  .crt-vintage-knob {
+    width: 35px;
+    height: 35px;
+  }
+
+  .knob-metallic-face {
+    width: 29px;
+    height: 29px;
+  }
+
+  .vol-tick-line {
+    margin-top: -22px;
+  }
+
+  .vintage-switch-collar {
+    padding: 3px 5px;
+  }
+
+  .vintage-switch-cap {
+    font-size: 0.54rem;
+  }
+
+  .crt-vintage-adj-btn {
+    padding: 4px 5px;
+    font-size: 0.52rem;
   }
 }
 

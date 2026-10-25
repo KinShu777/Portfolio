@@ -84,12 +84,15 @@ export const ProjectArchiveChannel: React.FC<ProjectArchiveChannelProps> = ({ on
         </div>
 
         {/* Category Filter Tabs */}
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '8px',
-          marginBottom: '2rem'
-        }}>
+        <div
+          className="project-category-tabs"
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px',
+            marginBottom: '2rem'
+          }}
+        >
           {categories.map((cat) => (
             <button
               key={cat}
@@ -116,12 +119,15 @@ export const ProjectArchiveChannel: React.FC<ProjectArchiveChannelProps> = ({ on
         </div>
 
         {/* Projects Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '1.5rem',
-          marginBottom: '3rem'
-        }}>
+        <div
+          className="crt-section-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '1.5rem',
+            marginBottom: '3rem'
+          }}
+        >
           {filteredProjects.map((project) => (
             <article
               key={project.id}
@@ -432,16 +438,19 @@ export const ProjectArchiveChannel: React.FC<ProjectArchiveChannelProps> = ({ on
           padding: '1.5rem',
           zIndex: 90
         }}>
-          <div style={{
-            backgroundColor: '#0c1017',
-            border: '2px solid #ffb703',
-            borderRadius: '12px',
-            maxWidth: '560px',
-            width: '100%',
-            padding: '1.5rem',
-            fontFamily: 'var(--font-body)',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.9)'
-          }}>
+          <div
+            className="project-modal-card"
+            style={{
+              backgroundColor: '#0c1017',
+              border: '2px solid #ffb703',
+              borderRadius: '12px',
+              maxWidth: '560px',
+              width: '100%',
+              padding: '1.5rem',
+              fontFamily: 'var(--font-body)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.9)'
+            }}
+          >
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',

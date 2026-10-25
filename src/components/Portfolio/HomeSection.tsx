@@ -33,12 +33,15 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
         <span>STATUS: {portfolioData.signalStatus}</span>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '2rem',
-        alignItems: 'center'
-      }}>
+      <div
+        className="crt-section-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '2rem',
+          alignItems: 'center'
+        }}
+      >
         {/* Left Column: Transmission Identity */}
         <div>
           <div style={{
@@ -90,7 +93,7 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
           </p>
 
           {/* Action Button Row */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+          <div className="home-action-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
             <button
               onClick={() => {
                 soundEngine.playChannelSwitch();

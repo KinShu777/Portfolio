@@ -44,21 +44,24 @@ export const CRTControlsPanel: React.FC<CRTControlsPanelProps> = ({
       </button>
 
       {isOpen && (
-        <div style={{
-          position: 'absolute',
-          bottom: 'calc(100% + 8px)',
-          right: '0',
-          width: '210px',
-          backgroundColor: '#161820',
-          border: '1px solid #363948',
-          borderRadius: '8px',
-          boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.8), 0 12px 24px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
-          padding: '12px',
-          zIndex: 90,
-          fontFamily: 'var(--font-telemetry)',
-          fontSize: '0.7rem',
-          color: '#c5cad6'
-        }}>
+        <div
+          className="crt-calibration-popover"
+          style={{
+            position: 'absolute',
+            bottom: 'calc(100% + 8px)',
+            right: '0',
+            width: '210px',
+            backgroundColor: '#161820',
+            border: '1px solid #363948',
+            borderRadius: '8px',
+            boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.8), 0 12px 24px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1)',
+            padding: '12px',
+            zIndex: 90,
+            fontFamily: 'var(--font-telemetry)',
+            fontSize: '0.7rem',
+            color: '#c5cad6'
+          }}
+        >
           <div style={{
             fontSize: '0.62rem',
             letterSpacing: '0.12em',

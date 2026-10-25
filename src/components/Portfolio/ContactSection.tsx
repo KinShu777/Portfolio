@@ -37,11 +37,14 @@ export const ContactSection: React.FC = () => {
         </h2>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '1.5rem'
-      }}>
+      <div
+        className="crt-section-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '1.5rem'
+        }}
+      >
         {/* Transmission Station Details */}
         <div style={{
           backgroundColor: '#050f0c',

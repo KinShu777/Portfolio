@@ -26,11 +26,14 @@ export const AchievementsSection: React.FC = () => {
         </h2>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '1.2rem'
-      }}>
+      <div
+        className="crt-section-grid"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.2rem'
+        }}
+      >
         {portfolioData.achievements.map((item) => (
           <div
             key={item.id}

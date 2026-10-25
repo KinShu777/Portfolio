@@ -133,16 +133,19 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
         </div>
 
         {/* Physical Radio Tuner Unit */}
-        <div style={{
-          backgroundColor: '#0c0e14',
-          border: '2px solid #282d3e',
-          borderRadius: '16px',
-          padding: '1.5rem',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.9), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.5rem'
-        }}>
+        <div
+          className="radio-tuner-unit"
+          style={{
+            backgroundColor: '#0c0e14',
+            border: '2px solid #282d3e',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.9), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.5rem'
+          }}
+        >
           {/* Backlit Frequency Dial Display */}
           <div style={{
             backgroundColor: '#05070a',
@@ -211,18 +214,21 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
             </div>
 
             {/* Large Fluorescent VFD Display */}
-            <div style={{
-              marginTop: '1rem',
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: '12px',
-              backgroundColor: '#020d09',
-              border: '1px solid #00e575',
-              borderRadius: '6px',
-              padding: '12px 16px'
-            }}>
+            <div
+              className="radio-vfd-display"
+              style={{
+                marginTop: '1rem',
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '12px',
+                backgroundColor: '#020d09',
+                border: '1px solid #00e575',
+                borderRadius: '6px',
+                padding: '12px 16px'
+              }}
+            >
               <div>
                 <div style={{
                   fontFamily: 'var(--font-telemetry)',
@@ -334,13 +340,16 @@ export const RetroRadioChannel: React.FC<RetroRadioChannelProps> = ({ onChannelC
           </div>
 
           {/* Radio Transport Controls */}
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
+          <div
+            className="radio-transport-row"
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '12px'
+            }}
+          >
             {/* Tuning Prev / Next */}
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
