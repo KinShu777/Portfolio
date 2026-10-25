@@ -106,11 +106,11 @@ export const portfolioData: PortfolioData = {
     },
     {
       id: "ach-2",
-      title: "[ADDITIONAL ENTRY — NEEDS INPUT]",
-      organization: "[VERIFIED INSTITUTION / COMPETITION]",
-      year: "20XX",
-      badge: "PENDING",
-      description: "Reserved slot for future verified competition, scholarship, or open source recognition."
+      title: "MUSIC & BROADCAST PERFORMANCE",
+      organization: "STATE LEVEL AWARDS & TELEVISION PROGRAMS",
+      year: "HONORS",
+      badge: "STATE AWARDS",
+      description: "Won several state level music awards and appeared on local television broadcast programs including Uttarakhand Got Talent."
     }
   ],
 

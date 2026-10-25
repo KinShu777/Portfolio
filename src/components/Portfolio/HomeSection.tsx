@@ -164,21 +164,23 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
 
           {/* Profile Photo / Transmission Feed */}
           <div style={{
-            height: '220px',
+            position: 'relative',
             borderRadius: '8px',
             overflow: 'hidden',
-            position: 'relative',
             border: '1px solid rgba(0, 255, 170, 0.4)',
-            backgroundColor: '#050d0a'
+            backgroundColor: '#050d0a',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}>
             <img
               src="/assets/avatar.jpg"
               alt="Avinash - Operator Profile"
               style={{
                 width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                objectPosition: 'center 20%',
+                height: 'auto',
+                display: 'block',
+                objectFit: 'contain',
                 filter: 'contrast(1.08) brightness(0.95)'
               }}
             />
@@ -193,7 +195,8 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
               backgroundColor: 'rgba(5, 15, 10, 0.75)',
               padding: '2px 6px',
               borderRadius: '2px',
-              backdropFilter: 'blur(2px)'
+              backdropFilter: 'blur(2px)',
+              zIndex: 2
             }}>
               LIVE FEED // OP-01
             </div>
@@ -201,8 +204,9 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
             <div style={{
               position: 'absolute',
               inset: 0,
-              background: 'repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.25) 4px)',
-              pointerEvents: 'none'
+              background: 'repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0, 0, 0, 0.22) 2px, rgba(0, 0, 0, 0.22) 4px)',
+              pointerEvents: 'none',
+              zIndex: 1
             }} />
           </div>
 
