@@ -27,6 +27,16 @@ export const SkillsSection: React.FC = () => {
       </div>
 
       <div style={{
+        fontFamily: 'var(--font-telemetry)',
+        fontSize: '0.72rem',
+        color: '#52b788',
+        marginBottom: '1.2rem',
+        letterSpacing: '0.06em'
+      }}>
+        ACTIVE & APPLIED TOOLING SPECTRUM // CONTEXTUAL FAMILIARITY
+      </div>
+
+      <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
         gap: '1.5rem'

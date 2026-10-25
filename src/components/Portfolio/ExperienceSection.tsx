@@ -22,7 +22,7 @@ export const ExperienceSection: React.FC = () => {
           letterSpacing: '0.08em',
           color: '#ffffff'
         }}>
-          SERVICE LOGS // EXPERIENCE & ACTIVITIES
+          BUILD LOG // INDEPENDENT PROJECTS
         </h2>
       </div>
 

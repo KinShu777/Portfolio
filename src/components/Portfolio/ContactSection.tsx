@@ -113,15 +113,6 @@ export const ContactSection: React.FC = () => {
               {copied ? '✓ COPIED' : 'COPY'}
             </button>
           </div>
-
-          {/* Security Telemetry */}
-          <div style={{
-            fontFamily: 'var(--font-telemetry)',
-            fontSize: '0.68rem',
-            color: '#5d6878'
-          }}>
-            PGP FINGERPRINT: <span style={{ color: '#00ffaa' }}>{portfolioData.contact.pgpKeyFingerprint}</span>
-          </div>
         </div>
 
         {/* Social Links & Archives */}
@@ -147,6 +138,7 @@ export const ContactSection: React.FC = () => {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {/* GitHub Link */}
               <a
                 href={portfolioData.contact.github}
                 target="_blank"
@@ -171,6 +163,7 @@ export const ContactSection: React.FC = () => {
                 <span>GITHUB // {portfolioData.contact.github}</span>
               </a>
 
+              {/* LinkedIn Link */}
               <a
                 href={portfolioData.contact.linkedin}
                 target="_blank"
@@ -192,7 +185,7 @@ export const ContactSection: React.FC = () => {
                 }}
               >
                 <LinkedInIcon size={18} color="#00e575" />
-                <span>LINKEDIN // {portfolioData.contact.linkedin}</span>
+                <span>LINKEDIN // AVINASH RAJPUT</span>
               </a>
             </div>
           </div>

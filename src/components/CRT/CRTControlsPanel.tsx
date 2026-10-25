@@ -32,13 +32,11 @@ export const CRTControlsPanel: React.FC<CRTControlsPanelProps> = ({
           soundEngine.playClick(500);
           onToggle();
         }}
-        className="crt-tv-power-btn"
+        className="crt-vintage-adj-btn"
         style={{
-          width: 'auto',
-          padding: '4px 8px',
-          fontSize: '0.58rem',
-          letterSpacing: '0.08em',
-          background: isOpen ? '#2b2d38' : undefined
+          background: isOpen ? '#222530' : undefined,
+          borderColor: isOpen ? '#00ffaa' : undefined,
+          color: isOpen ? '#00ffaa' : undefined
         }}
         title="CRT Display Calibration Panel"
       >

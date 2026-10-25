@@ -46,7 +46,8 @@ export interface ProjectItem {
   githubUrl?: string;
   liveUrl?: string;
   caseStudyUrl?: string;
-  previewNote: string;
+  previewNote?: string;
+  imageUrl?: string;
   featured?: boolean;
 }
 
@@ -105,6 +106,5 @@ export interface PortfolioData {
     github: string;
     linkedin: string;
     transmissionNode: string;
-    pgpKeyFingerprint: string;
   };
 }

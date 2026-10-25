@@ -13,11 +13,11 @@ export const ProjectArchiveChannel: React.FC<ProjectArchiveChannelProps> = ({ on
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [activeModalProject, setActiveModalProject] = useState<ProjectItem | null>(null);
 
-  const categories = ['ALL', 'SYSTEMS & FULLSTACK', 'INTERACTIVE & CREATIVE', 'DEV TOOLS / CLI'];
+  const categories = ['ALL', ...Array.from(new Set(projectsData.map(p => p.category)))];
 
   const filteredProjects = selectedCategory === 'ALL'
     ? projectsData
-    : projectsData.filter(p => p.category.includes(selectedCategory) || selectedCategory.includes(p.category));
+    : projectsData.filter(p => p.category === selectedCategory);
 
   return (
     <div className="crt-scroll-container" tabIndex={0} aria-label="Project Archive Transmission">
@@ -135,38 +135,75 @@ export const ProjectArchiveChannel: React.FC<ProjectArchiveChannelProps> = ({ on
                 boxShadow: '0 8px 16px rgba(0, 0, 0, 0.6)'
               }}
             >
-              {/* Media Preview Box / Asset Placeholder */}
+              {/* Media Preview Box */}
               <div style={{
                 height: '180px',
                 backgroundColor: '#07090f',
                 borderBottom: '1px solid rgba(255, 183, 3, 0.2)',
+                position: 'relative',
+                overflow: 'hidden',
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                padding: '1.2rem',
-                textAlign: 'center',
-                position: 'relative'
+                justifyContent: 'center'
               }}>
-                <TerminalIcon size={24} color="#ffb703" />
-                <div style={{
-                  fontFamily: 'var(--font-telemetry)',
-                  fontSize: '0.75rem',
-                  color: '#ffffff',
-                  fontWeight: 700,
-                  marginTop: '0.5rem',
-                  letterSpacing: '0.04em'
-                }}>
-                  {project.previewNote}
-                </div>
-                <div style={{
-                  fontFamily: 'var(--font-telemetry)',
-                  fontSize: '0.62rem',
-                  color: '#ffb703',
-                  marginTop: '0.2rem'
-                }}>
-                  Place your image in public/assets/projects/{project.id}.webp
-                </div>
+                {project.imageUrl ? (
+                  <>
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        objectPosition: 'center',
+                        filter: 'contrast(1.05) brightness(0.92)'
+                      }}
+                    />
+                    {/* Retro raster scanline texture on preview */}
+                    <div style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.25) 4px)',
+                      pointerEvents: 'none'
+                    }} />
+                    {/* Status badge */}
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '8px',
+                      left: '8px',
+                      fontFamily: 'var(--font-telemetry)',
+                      fontSize: '0.6rem',
+                      color: '#ffb703',
+                      backgroundColor: 'rgba(10, 14, 20, 0.85)',
+                      padding: '2px 6px',
+                      borderRadius: '2px',
+                      border: '1px solid rgba(255, 183, 3, 0.3)'
+                    }}>
+                      RASTER CAPTURE // {project.number}
+                    </div>
+                  </>
+                ) : (
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '1.2rem',
+                    textAlign: 'center'
+                  }}>
+                    <TerminalIcon size={24} color="#ffb703" />
+                    <div style={{
+                      fontFamily: 'var(--font-telemetry)',
+                      fontSize: '0.75rem',
+                      color: '#ffffff',
+                      fontWeight: 700,
+                      marginTop: '0.5rem',
+                      letterSpacing: '0.04em'
+                    }}>
+                      {project.previewNote || 'NO SIGNAL PREVIEW'}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Card Body */}
@@ -269,52 +306,94 @@ export const ProjectArchiveChannel: React.FC<ProjectArchiveChannelProps> = ({ on
                   paddingTop: '12px'
                 }}>
                   {project.githubUrl && (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => soundEngine.playClick(650)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        color: '#e2e8f0',
-                        textDecoration: 'none',
-                        fontFamily: 'var(--font-telemetry)',
-                        fontSize: '0.72rem',
-                        backgroundColor: '#1a2233',
-                        padding: '6px 10px',
-                        borderRadius: '4px'
-                      }}
-                    >
-                      <GitHubIcon size={14} />
-                      <span>CODE</span>
-                    </a>
+                    project.githubUrl.startsWith('http') && !project.githubUrl.includes('[NEEDS INPUT') ? (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => soundEngine.playClick(650)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          color: '#e2e8f0',
+                          textDecoration: 'none',
+                          fontFamily: 'var(--font-telemetry)',
+                          fontSize: '0.72rem',
+                          backgroundColor: '#1a2233',
+                          padding: '6px 10px',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        <GitHubIcon size={14} />
+                        <span>CODE</span>
+                      </a>
+                    ) : (
+                      <span
+                        title="Pending repository uplink"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          color: '#64748b',
+                          fontFamily: 'var(--font-telemetry)',
+                          fontSize: '0.72rem',
+                          backgroundColor: '#0c1017',
+                          border: '1px dashed #2d3748',
+                          padding: '6px 10px',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        <GitHubIcon size={14} color="#64748b" />
+                        <span>[CODE PENDING]</span>
+                      </span>
+                    )
                   )}
 
                   {project.liveUrl && (
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => soundEngine.playClick(650)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        color: '#ffb703',
-                        textDecoration: 'none',
-                        fontFamily: 'var(--font-telemetry)',
-                        fontSize: '0.72rem',
-                        backgroundColor: 'rgba(255, 183, 3, 0.12)',
-                        border: '1px solid rgba(255, 183, 3, 0.4)',
-                        padding: '6px 10px',
-                        borderRadius: '4px'
-                      }}
-                    >
-                      <ExternalLinkIcon size={14} />
-                      <span>LIVE DEMO</span>
-                    </a>
+                    project.liveUrl.startsWith('http') && !project.liveUrl.includes('[NEEDS INPUT') ? (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => soundEngine.playClick(650)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          color: '#ffb703',
+                          textDecoration: 'none',
+                          fontFamily: 'var(--font-telemetry)',
+                          fontSize: '0.72rem',
+                          backgroundColor: 'rgba(255, 183, 3, 0.12)',
+                          border: '1px solid rgba(255, 183, 3, 0.4)',
+                          padding: '6px 10px',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        <ExternalLinkIcon size={14} />
+                        <span>LIVE DEMO</span>
+                      </a>
+                    ) : (
+                      <span
+                        title="Pending live deployment uplink"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          color: '#64748b',
+                          fontFamily: 'var(--font-telemetry)',
+                          fontSize: '0.72rem',
+                          backgroundColor: '#0c1017',
+                          border: '1px dashed #2d3748',
+                          padding: '6px 10px',
+                          borderRadius: '4px'
+                        }}
+                      >
+                        <ExternalLinkIcon size={14} color="#64748b" />
+                        <span>[DEMO PENDING]</span>
+                      </span>
+                    )
                   )}
 
                   <button

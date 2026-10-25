@@ -1,20 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { PowerState, ChannelId, CRTIntensity, PhosphorTheme, PhosphorBloom } from '../../types';
-import { PowerIcon, RadioIcon, VolumeMuteIcon, VolumeUpIcon } from '../UI/RetroIcons';
+import { RadioIcon } from '../UI/RetroIcons';
 import { CRTControlsPanel } from './CRTControlsPanel';
 import { soundEngine } from '../../audio/soundEngine';
 
 interface CRTFrameProps {
   powerState: PowerState;
   activeChannel: ChannelId;
-  isMuted: boolean;
+  isMuted?: boolean;
   volume: number;
   onTogglePower: () => void;
   onChannelChange: (ch: ChannelId) => void;
   onChannelNext: () => void;
   onChannelPrev: () => void;
   onVolumeChange: (vol: number) => void;
-  onToggleMute: () => void;
+  onToggleMute?: () => void;
   crtIntensity: CRTIntensity;
   onIntensityChange: (lvl: CRTIntensity) => void;
   phosphorTheme: PhosphorTheme;
@@ -28,14 +28,12 @@ interface CRTFrameProps {
 export const CRTFrame: React.FC<CRTFrameProps> = ({
   powerState,
   activeChannel,
-  isMuted,
   volume,
   onTogglePower,
   onChannelChange,
   onChannelNext,
   onChannelPrev,
   onVolumeChange,
-  onToggleMute,
   crtIntensity,
   onIntensityChange,
   phosphorTheme,
@@ -51,7 +49,7 @@ export const CRTFrame: React.FC<CRTFrameProps> = ({
   const startY = useRef<number>(0);
   const startVol = useRef<number>(volume);
 
-  // Knob rotation angle: Volume 0 => -135deg, Volume 1 => +135deg
+  // Knob rotation angle: Volume 0 => -135deg, Volume 1 => +135deg (total 270deg sweep)
   const knobAngle = -135 + volume * 270;
 
   // Wheel interaction for analog volume knob
@@ -63,7 +61,7 @@ export const CRTFrame: React.FC<CRTFrameProps> = ({
     onVolumeChange(nextVol);
   };
 
-  // Drag interaction for analog knob
+  // Drag interaction for analog volume knob
   const handlePointerDown = (e: React.PointerEvent) => {
     isDraggingKnob.current = true;
     startY.current = e.clientY;
@@ -90,7 +88,6 @@ export const CRTFrame: React.FC<CRTFrameProps> = ({
     }
   };
 
-  // Prevent scroll during knob drag
   useEffect(() => {
     const handleGlobalMouseUp = () => {
       isDraggingKnob.current = false;
@@ -113,144 +110,157 @@ export const CRTFrame: React.FC<CRTFrameProps> = ({
         {children}
 
         {/* Physical TV Hardware Control Side Panel */}
-        <aside className="crt-hardware-panel" aria-label="Physical Television Controls">
-          {/* Brand plate */}
+        <aside className="crt-hardware-panel" aria-label="Television Hardware Controls">
+          {/* Top Brand Plate */}
           <div className="crt-brand-emblem">
             <span className="crt-brand-dot" />
             <span>KV-1984</span>
           </div>
 
-          {/* Section 1: Power Button & Indicator LED */}
-          <div className="crt-panel-section">
-            <div className="crt-indicator-row">
-              <div
-                className={`crt-led ${powerState === 'on' ? 'led-on' : 'led-standby'}`}
-                title={`Status: ${powerState === 'on' ? 'POWER ON' : 'STANDBY'}`}
-              />
-              <span className="crt-led-label">POWER</span>
-            </div>
-
+          {/* 1. POWER BUTTON (Image 3: circular brushed metal button with power icon, no 'power' text) */}
+          <div className="crt-control-group crt-power-group">
             <button
               type="button"
-              className={`crt-tv-power-btn ${powerState === 'on' ? 'depressed' : ''}`}
+              className={`crt-vintage-power-btn ${powerState === 'on' ? 'power-on' : ''}`}
               onClick={() => {
                 soundEngine.playClick(320);
                 onTogglePower();
               }}
-              title="Physical TV Power Switch"
-              aria-label="Physical TV Power Button"
+              title={powerState === 'on' ? 'TV On (Click to turn off)' : 'TV Off (Click to turn on)'}
+              aria-label="Power Button"
             >
-              <PowerIcon size={13} color={powerState === 'on' ? '#00ff88' : '#e63946'} />
-              <span>POWER</span>
+              <div className="power-btn-outer-bezel">
+                <div className="power-btn-inner-ring">
+                  <div className="power-btn-cap">
+                    <svg viewBox="0 0 24 24" className="power-symbol-svg" aria-hidden="true">
+                      <line x1="12" y1="3.5" x2="12" y2="11" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" />
+                      <path d="M18.36 6.64a9 9 0 1 1-12.73 0" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
             </button>
           </div>
 
-          {/* Section 2: Channel Controls (CH+ / CH-) */}
-          <div className="crt-panel-section">
-            <div className="crt-panel-section-label">
-              <span>CH SELECT</span>
-              <span className="crt-channel-badge-mini">0{activeChannel}</span>
-            </div>
-            <div className="crt-channel-rocker">
-              <button
-                type="button"
-                className="crt-hardware-btn"
+          {/* 2. CHANNEL KNOB (Image 1 & 2: knurled perimeter, metallic face, crossbar, with 'CHANNEL' written on it) */}
+          <div className="crt-control-group">
+            <div className="crt-dial-container">
+              {/* Channel tick marks 1, 2, 3, 4 around dial */}
+              <div className="crt-channel-tick-ring" aria-hidden="true">
+                <span className={`channel-num num-1 ${activeChannel === 1 ? 'active' : ''}`}>1</span>
+                <span className={`channel-num num-2 ${activeChannel === 2 ? 'active' : ''}`}>2</span>
+                <span className={`channel-num num-3 ${activeChannel === 3 ? 'active' : ''}`}>3</span>
+                <span className={`channel-num num-4 ${activeChannel === 4 ? 'active' : ''}`}>4</span>
+              </div>
+
+              {/* Rotary Channel Knob */}
+              <div
+                className="crt-vintage-knob crt-channel-knob"
+                style={{
+                  transform: `rotate(${(activeChannel - 1) * 75 - 112}deg)`
+                }}
                 onClick={() => {
                   soundEngine.playChannelSwitch();
                   onChannelNext();
                 }}
-                title="Channel Up (CH+)"
-                aria-label="Channel Up"
-              >
-                ▲ CH+
-              </button>
-              <button
-                type="button"
-                className="crt-hardware-btn"
-                onClick={() => {
+                onWheel={(e) => {
+                  e.preventDefault();
                   soundEngine.playChannelSwitch();
-                  onChannelPrev();
+                  if (e.deltaY < 0) onChannelNext();
+                  else onChannelPrev();
                 }}
-                title="Channel Down (CH-)"
-                aria-label="Channel Down"
+                title={`Channel: CH 0${activeChannel} (Click or scroll to rotate)`}
+                aria-label="Channel Selector Knob"
+                role="button"
+                tabIndex={0}
               >
-                ▼ CH-
-              </button>
+                <div className="knob-knurled-skirt" />
+                <div className="knob-metallic-face channel-metallic-face">
+                  <div className="knob-crossbar-pointer" />
+                  <span className="knob-label-engraved">CHANNEL</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Section 3: Analog Volume / Tune Rotary Knob */}
-          <div className="crt-panel-section">
-            <span className="crt-knob-label">VOL / TUNE</span>
-            <div
-              ref={knobRef}
-              className="crt-rotary-knob"
-              style={{
-                transform: `rotate(${knobAngle}deg)`
-              }}
-              onWheel={handleKnobWheel}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              title={`Analog Volume: ${Math.round(volume * 100)}% (Drag up/down or scroll wheel)`}
-              aria-label="Analog Volume and Tuning Knob"
-              role="slider"
-              aria-valuenow={Math.round(volume * 100)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            />
-            <div className="crt-knob-readout">
-              {Math.round(volume * 100)}%
-            </div>
-          </div>
+          {/* 3. VOLUME KNOB (Image 2: gold/champagne brushed knurled knob with indicator notch, 0-11 scale, 'VOLUME' written on it) */}
+          <div className="crt-control-group">
+            <div className="crt-dial-container">
+              {/* Radial tick marks and 0 to 11 scale */}
+              <div className="crt-volume-tick-ring" aria-hidden="true">
+                <div className="vol-radial-ticks">
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="vol-tick-line"
+                      style={{
+                        transform: `rotate(${-135 + i * (270 / 11)}deg)`
+                      }}
+                    />
+                  ))}
+                </div>
+                <span className="vol-scale-num scale-0">0</span>
+                <span className="vol-scale-num scale-11">11</span>
+              </div>
 
-          {/* Section 4: Mute & Radio Physical Buttons */}
-          <div className="crt-panel-section crt-button-row">
-            {/* Mute Button with Indicator */}
-            <div className="crt-btn-with-led">
-              <button
-                type="button"
-                className={`crt-hardware-btn crt-btn-square ${isMuted ? 'active-mute' : ''}`}
-                onClick={() => {
-                  soundEngine.playClick(520);
-                  onToggleMute();
-                }}
-                title={isMuted ? 'Unmute Audio' : 'Mute Master Audio'}
-                aria-label="Mute Audio"
-              >
-                {isMuted ? <VolumeMuteIcon size={12} color="#ff4d4d" /> : <VolumeUpIcon size={12} />}
-                <span>MUTE</span>
-              </button>
+              {/* Rotary Volume Knob */}
               <div
-                className={`crt-subtle-indicator ${isMuted ? 'active' : ''}`}
-                title={isMuted ? 'Muted' : 'Audio Active'}
-              />
+                ref={knobRef}
+                className="crt-vintage-knob crt-volume-knob"
+                style={{
+                  transform: `rotate(${knobAngle}deg)`
+                }}
+                onWheel={handleKnobWheel}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                title={`Volume: ${Math.round(volume * 100)}% (Drag up/down or scroll wheel)`}
+                aria-label="Volume Knob"
+                role="slider"
+                aria-valuenow={Math.round(volume * 100)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                tabIndex={0}
+              >
+                <div className="knob-knurled-skirt vol-knurled-skirt" />
+                <div className="knob-metallic-face vol-metallic-face">
+                  <div className="vol-indicator-notch" />
+                  <span className="knob-label-engraved vol-label-engraved">VOLUME</span>
+                </div>
+              </div>
             </div>
+          </div>
 
-            {/* Radio Button */}
+          {/* 4. VINTAGE STYLED RADIO BUTTON (Image 1: classic TV pushbutton switch with metallic bezel) */}
+          <div className="crt-control-group crt-radio-group">
             <button
               type="button"
-              className={`crt-hardware-btn crt-btn-square ${activeChannel === 3 ? 'active-radio' : ''}`}
+              className={`crt-vintage-radio-btn ${activeChannel === 3 ? 'radio-active' : ''}`}
               onClick={() => {
                 soundEngine.playChannelSwitch();
                 onChannelChange(3);
               }}
               title="Tune to Channel 03: Retro FM Radio"
-              aria-label="Retro FM Radio"
+              aria-label="Radio Tuner Mode"
             >
-              <RadioIcon size={12} color={activeChannel === 3 ? '#ff2a6d' : 'currentColor'} />
-              <span>RADIO</span>
+              <div className="vintage-switch-collar">
+                <div className="vintage-switch-cap">
+                  <RadioIcon size={12} color={activeChannel === 3 ? '#ff2a6d' : '#949bb0'} />
+                  <span>RADIO</span>
+                </div>
+                <div className={`vintage-switch-indicator ${activeChannel === 3 ? 'indicator-on' : ''}`} />
+              </div>
             </button>
           </div>
 
           {/* Acoustic Speaker Slits */}
           <div className="crt-speaker-grille" aria-hidden="true">
-            {Array.from({ length: 8 }).map((_, i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="crt-speaker-slit" />
             ))}
           </div>
 
-          {/* Bottom Service Calibration Toggle */}
+          {/* 5. CRT ADJ BUTTON AT THE VERY END */}
           <div className="crt-bottom-cluster">
             <CRTControlsPanel
               intensity={crtIntensity}
@@ -266,7 +276,7 @@ export const CRTFrame: React.FC<CRTFrameProps> = ({
           </div>
         </aside>
 
-        {/* Realistic base feet / stand */}
+        {/* Base feet / stand */}
         <div className="crt-stand" aria-hidden="true">
           <div className="crt-foot" />
           <div className="crt-foot" />

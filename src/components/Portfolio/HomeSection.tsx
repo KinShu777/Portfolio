@@ -1,6 +1,6 @@
 import React from 'react';
 import { portfolioData } from '../../config/portfolioData';
-import { TerminalIcon, ExternalLinkIcon } from '../UI/RetroIcons';
+import { ExternalLinkIcon } from '../UI/RetroIcons';
 import { soundEngine } from '../../audio/soundEngine';
 
 interface HomeSectionProps {
@@ -162,50 +162,48 @@ export const HomeSection: React.FC<HomeSectionProps> = ({
             <span>OSD-CAM 01</span>
           </div>
 
-          {/* Profile Photo / Visual Asset Placeholder */}
+          {/* Profile Photo / Transmission Feed */}
           <div style={{
-            height: '200px',
-            background: 'radial-gradient(circle at 50% 50%, #0d241d 0%, #050d0a 100%)',
-            border: '2px dashed rgba(0, 255, 170, 0.4)',
+            height: '220px',
             borderRadius: '8px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1rem',
-            textAlign: 'center',
+            overflow: 'hidden',
             position: 'relative',
-            overflow: 'hidden'
+            border: '1px solid rgba(0, 255, 170, 0.4)',
+            backgroundColor: '#050d0a'
           }}>
-            {/* Crosshair reticle */}
+            <img
+              src="/assets/avatar.jpg"
+              alt="Avinash - Operator Profile"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center 20%',
+                filter: 'contrast(1.08) brightness(0.95)'
+              }}
+            />
+            {/* OSD CRT overlay markings */}
             <div style={{
               position: 'absolute',
-              width: '40px',
-              height: '40px',
-              border: '1px solid rgba(0, 255, 170, 0.25)',
-              borderRadius: '50%',
+              top: '8px',
+              left: '8px',
+              fontFamily: 'var(--font-telemetry)',
+              fontSize: '0.62rem',
+              color: '#00ffaa',
+              backgroundColor: 'rgba(5, 15, 10, 0.75)',
+              padding: '2px 6px',
+              borderRadius: '2px',
+              backdropFilter: 'blur(2px)'
+            }}>
+              LIVE FEED // OP-01
+            </div>
+            {/* Scanline sub-overlay on photo */}
+            <div style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'repeating-linear-gradient(transparent 0px, transparent 2px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.25) 4px)',
               pointerEvents: 'none'
             }} />
-            <TerminalIcon size={28} color="#00ffaa" />
-            <div style={{
-              fontFamily: 'var(--font-telemetry)',
-              fontSize: '0.78rem',
-              color: '#ffffff',
-              fontWeight: 700,
-              marginTop: '0.6rem',
-              letterSpacing: '0.06em'
-            }}>
-              ASSET NEEDED: Profile Photo / Pixel Avatar
-            </div>
-            <div style={{
-              fontFamily: 'var(--font-telemetry)',
-              fontSize: '0.65rem',
-              color: '#8be9c8',
-              marginTop: '0.3rem',
-              maxWidth: '240px'
-            }}>
-              Recommended: 1:1 ratio (400x400 px), retro monochrome or stylized portrait
-            </div>
           </div>
 
           {/* Quick Specs Grid */}
