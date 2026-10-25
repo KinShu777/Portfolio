@@ -1,0 +1,841 @@
+/* ==========================================================================
+   THE CRT PORTFOLIO — 1980s / 1990s ANALOG BROADCAST DESIGN SYSTEM
+   ========================================================================== */
+
+:root {
+  /* Environment & Room Atmosphere */
+  --room-bg: #090a0d;
+  --room-ambient: radial-gradient(circle at 50% 30%, #151821 0%, #08090c 75%, #030406 100%);
+  --shelf-shadow: 0 45px 80px -20px rgba(0, 0, 0, 0.95), 0 25px 35px -10px rgba(0, 0, 0, 0.8);
+
+  /* CRT Chassis & Hardware Materials */
+  --tv-body-base: #1b1c21;
+  --tv-body-gradient: linear-gradient(175deg, #282931 0%, #1d1e24 45%, #14151a 100%);
+  --tv-bezel-outer: #0e0f14;
+  --tv-bezel-inner: #07080a;
+  --tv-plastic-texture: repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+  --tv-highlight: rgba(255, 255, 255, 0.08);
+  --tv-shadow-inset: inset 0 2px 4px rgba(255, 255, 255, 0.08), inset 0 -6px 12px rgba(0, 0, 0, 0.7);
+
+  /* CRT Screen Glass & Dark State */
+  --crt-glass-dark: #07090b;
+  --crt-glass-reflection: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 35%, transparent 60%);
+  --crt-glass-curvature: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.45) 85%, rgba(0, 0, 0, 0.88) 100%);
+  --crt-bezel-lip: inset 0 0 28px 12px rgba(0, 0, 0, 0.85), inset 0 0 6px 2px rgba(0, 0, 0, 0.95);
+
+  /* Phosphor Themes */
+  --phosphor-color-glow: rgba(0, 240, 180, 0.25);
+  --phosphor-color-text: #39ffb4;
+  --phosphor-green-glow: rgba(57, 255, 20, 0.28);
+  --phosphor-green-text: #41ff6b;
+  --phosphor-amber-glow: rgba(255, 176, 0, 0.28);
+  --phosphor-amber-text: #ffb703;
+  --phosphor-cyan-glow: rgba(0, 229, 255, 0.28);
+  --phosphor-cyan-text: #48e5ff;
+
+  /* Typography Stacks */
+  --font-osd: 'VT323', monospace;
+  --font-telemetry: 'Share Tech Mono', monospace;
+  --font-body: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-badge: 'Press Start 2P', monospace;
+
+  /* Scanlines */
+  --scanline-color: rgba(0, 0, 0, 0.42);
+  --scanline-height: 3px;
+
+  /* Remote Control */
+  --remote-body: #191a20;
+  --remote-rubber: #2d303a;
+  --remote-rubber-active: #18191f;
+  --remote-red: #d90429;
+}
+
+/* Reset & Base Rules */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--room-bg);
+  background: var(--room-ambient);
+  color: #e0e4eb;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Interactive focus indicators for accessibility */
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--phosphor-color-text);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   AUTHENTIC PHYSICAL CRT TELEVISION CHASSIS
+   ========================================================================== */
+
+.crt-apparatus-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem 3rem;
+  z-index: 10;
+}
+
+.crt-cabinet {
+  position: relative;
+  width: min(94vw, 1060px);
+  max-height: 88vh;
+  aspect-ratio: 4 / 3.15;
+  background: var(--tv-body-gradient);
+  border-radius: 28px;
+  box-shadow:
+    var(--shelf-shadow),
+    0 0 0 2px #323542,
+    inset 0 2px 4px rgba(255, 255, 255, 0.15),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.85);
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  padding: 24px;
+  gap: 20px;
+  user-select: none;
+  transition: box-shadow 0.6s ease;
+}
+
+.crt-cabinet::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: var(--tv-plastic-texture);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* Top Ventilation Grille */
+.crt-cabinet-vents {
+  position: absolute;
+  top: 6px;
+  left: 20%;
+  right: 20%;
+  height: 10px;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.crt-vent-slit {
+  width: 32px;
+  height: 3px;
+  background: #090a0d;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Realistic Television Legs / Base Stand */
+.crt-stand {
+  position: absolute;
+  bottom: -18px;
+  left: 10%;
+  right: 10%;
+  height: 18px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.crt-foot {
+  width: 90px;
+  height: 100%;
+  background: linear-gradient(180deg, #18191f 0%, #0d0e12 100%);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.8);
+}
+
+/* ==========================================================================
+   CRT SCREEN HOUSING & CURVED GLASS
+   ========================================================================== */
+
+.crt-screen-bezel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #111217 0%, #0a0b0e 100%);
+  border-radius: 22px;
+  box-shadow:
+    inset 0 0 0 3px #1f212a,
+    inset 0 8px 16px rgba(0, 0, 0, 0.9),
+    0 2px 4px rgba(255, 255, 255, 0.05);
+  padding: 18px;
+  display: flex;
+  overflow: hidden;
+}
+
+.crt-screen-glass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  background-color: var(--crt-glass-dark);
+  box-shadow: var(--crt-bezel-lip);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Phosphor Screen Glass Reflections & Vignette */
+.crt-glass-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  border-radius: 18px;
+  background:
+    var(--crt-glass-reflection),
+    var(--crt-glass-curvature);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.7);
+}
+
+/* Moving Scanlines */
+.crt-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 45;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.35) 50%
+  );
+  background-size: 100% var(--scanline-height);
+  mix-blend-mode: overlay;
+}
+
+/* CRT Intensity variations */
+.crt-intensity-off .crt-scanlines,
+.crt-intensity-off .crt-vignette,
+.crt-intensity-off .crt-glass-overlay {
+  display: none !important;
+}
+
+.crt-intensity-low .crt-scanlines {
+  opacity: 0.3;
+}
+
+.crt-intensity-medium .crt-scanlines {
+  opacity: 0.75;
+}
+
+.crt-intensity-high .crt-scanlines {
+  opacity: 1;
+}
+
+/* Phosphor Glow on Content */
+.crt-phosphor-glow-medium {
+  text-shadow: 0 0 8px var(--phosphor-color-glow);
+}
+
+.crt-phosphor-glow-high {
+  text-shadow: 0 0 14px var(--phosphor-color-glow), 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Barrel Curvature Simulation */
+.crt-screen-curved {
+  transform: scale(0.992);
+  transition: transform 0.3s ease;
+}
+
+/* Subtle CRT Raster Flicker */
+@keyframes crt-flicker {
+  0% { opacity: 0.985; }
+  50% { opacity: 1; }
+  70% { opacity: 0.99; }
+  100% { opacity: 0.982; }
+}
+
+.crt-screen-flicker {
+  animation: crt-flicker 0.12s infinite;
+}
+
+/* ==========================================================================
+   TV HARDWARE SIDE PANEL (Physical Knobs, Grille, Power LED)
+   ========================================================================== */
+
+.crt-hardware-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 4px 6px;
+  background: linear-gradient(180deg, #17181f 0%, #121318 100%);
+  border-radius: 14px;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05), inset 0 -4px 8px rgba(0, 0, 0, 0.6);
+  border: 1px solid #23252f;
+}
+
+/* Brand Emblem */
+.crt-brand-emblem {
+  font-family: var(--font-telemetry);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: #7b8092;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  width: 100%;
+  justify-content: center;
+}
+
+.crt-brand-dot {
+  width: 5px;
+  height: 5px;
+  background: #ff3b30;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Rotary Knobs */
+.crt-knob-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.crt-rotary-knob-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.crt-knob-label {
+  font-family: var(--font-telemetry);
+  font-size: 0.62rem;
+  color: #606473;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.crt-rotary-knob {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #343743 0%, #181920 70%, #0d0e12 100%);
+  border: 2px solid #282a35;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 3px rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crt-rotary-knob::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  width: 3px;
+  height: 9px;
+  background: #00ff88;
+  border-radius: 1px;
+  box-shadow: 0 0 4px #00ff88;
+}
+
+.crt-rotary-knob:hover {
+  transform: rotate(25deg);
+}
+
+.crt-rotary-knob:active {
+  transform: scale(0.96) rotate(35deg);
+}
+
+/* Speaker Grille */
+.crt-speaker-grille {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 80%;
+  padding: 10px 0;
+}
+
+.crt-speaker-slit {
+  width: 100%;
+  height: 3px;
+  background: #090a0d;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* TV Power Button & Indicator cluster */
+.crt-bottom-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.crt-indicator-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crt-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #3b0d0d;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.crt-led.led-standby {
+  background-color: #e63946;
+  box-shadow: 0 0 8px #e63946, 0 0 14px rgba(230, 57, 70, 0.4);
+}
+
+.crt-led.led-on {
+  background-color: #00ff88;
+  box-shadow: 0 0 9px #00ff88, 0 0 18px rgba(0, 255, 136, 0.6);
+}
+
+.crt-led-label {
+  font-family: var(--font-telemetry);
+  font-size: 0.6rem;
+  color: #727685;
+  letter-spacing: 0.1em;
+}
+
+/* Physical Mechanical Power Button on TV */
+.crt-tv-power-btn {
+  width: 48px;
+  height: 30px;
+  background: linear-gradient(180deg, #383a45 0%, #1e2028 100%);
+  border: 1px solid #4a4d5c;
+  border-radius: 6px;
+  color: #d1d5db;
+  font-family: var(--font-telemetry);
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
+  transition: all 0.1s ease;
+}
+
+.crt-tv-power-btn:active, .crt-tv-power-btn.depressed {
+  transform: translateY(2px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.8), inset 0 2px 4px rgba(0,0,0,0.6);
+  background: linear-gradient(180deg, #22242b 0%, #17181f 100%);
+}
+
+/* ==========================================================================
+   STARTUP SEQUENCE ANIMATIONS (Stages 1-13)
+   ========================================================================== */
+
+/* CRT Power Off / Sleep Screen */
+.crt-screen-off {
+  background-color: #040507;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.crt-power-prompt {
+  font-family: var(--font-osd);
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  letter-spacing: 0.15em;
+  color: rgba(57, 255, 180, 0.65);
+  text-shadow: 0 0 8px rgba(57, 255, 180, 0.4);
+  text-align: center;
+  padding: 1rem;
+  animation: prompt-flicker 2.4s infinite;
+}
+
+@keyframes prompt-flicker {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0.25; }
+  72% { opacity: 0.85; }
+  75% { opacity: 0.3; }
+  85% { opacity: 0.75; }
+}
+
+/* Bright Expanding Horizontal Phosphor Line (Collapsing raster beam effect) */
+.crt-beam-line {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  right: 5%;
+  height: 3px;
+  background: #ffffff;
+  box-shadow: 0 0 16px 4px #00ffcc, 0 0 30px 8px #ffffff;
+  transform: translateY(-50%) scaleY(1);
+  animation: beam-expansion 1.2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes beam-expansion {
+  0% {
+    left: 48%;
+    right: 48%;
+    height: 2px;
+    opacity: 0.2;
+    transform: translateY(-50%) scaleY(1);
+  }
+  30% {
+    left: 2%;
+    right: 2%;
+    height: 4px;
+    opacity: 1;
+    transform: translateY(-50%) scaleY(1.2);
+  }
+  60% {
+    left: 0%;
+    right: 0%;
+    height: 24%;
+    opacity: 0.95;
+    transform: translateY(-50%) scaleY(1);
+  }
+  100% {
+    left: 0%;
+    right: 0%;
+    height: 100%;
+    opacity: 1;
+    transform: translateY(-50%) scaleY(1);
+  }
+}
+
+/* Static Noise Burst Canvas */
+.crt-noise-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 40;
+}
+
+/* Chromatic Aberration flash during boot */
+.crt-chromatic-flash {
+  animation: chromatic-glitch 0.4s ease-out;
+}
+
+@keyframes chromatic-glitch {
+  0% {
+    filter: drop-shadow(-4px 0 #ff0055) drop-shadow(4px 0 #00ffff);
+  }
+  50% {
+    filter: drop-shadow(3px 0 #ff0055) drop-shadow(-3px 0 #00ffff);
+  }
+  100% {
+    filter: none;
+  }
+}
+
+/* Welcome Broadcast Acquisition Screen */
+.crt-welcome-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #020d09;
+  color: #39ffb4;
+  font-family: var(--font-osd);
+  text-align: center;
+  z-index: 35;
+  animation: welcome-fade-in 0.8s ease-out forwards;
+}
+
+@keyframes welcome-fade-in {
+  from { opacity: 0; transform: scale(1.05); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   INTERNAL SCROLLABLE WEBSITE (Inside the CRT Screen)
+   ========================================================================== */
+
+.crt-scroll-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #00ffaa #0b1210;
+  scroll-behavior: smooth;
+  z-index: 10;
+}
+
+/* Vintage phosphor styled scrollbar */
+.crt-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.crt-scroll-container::-webkit-scrollbar-track {
+  background: #060e0b;
+  border-left: 1px solid rgba(0, 255, 170, 0.15);
+}
+
+.crt-scroll-container::-webkit-scrollbar-thumb {
+  background: #00e575;
+  border-radius: 4px;
+  box-shadow: 0 0 6px #00e575;
+}
+
+.crt-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #48ff9b;
+}
+
+/* Broadcast Header Bar */
+.crt-broadcast-hud {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: rgba(3, 14, 10, 0.92);
+  backdrop-filter: blur(4px);
+  border-bottom: 1px solid rgba(0, 255, 170, 0.25);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-telemetry);
+  font-size: 0.75rem;
+  color: #39ffb4;
+}
+
+.hud-rec-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #ff3366;
+}
+
+.hud-rec-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ff3366;
+  border-radius: 50%;
+  animation: rec-blink 1s infinite;
+}
+
+@keyframes rec-blink {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #ff3366; }
+  50% { opacity: 0.2; box-shadow: none; }
+}
+
+/* ==========================================================================
+   PHYSICAL VINTAGE TV REMOTE CONTROL
+   ========================================================================== */
+
+.remote-outer-shell {
+  position: fixed;
+  bottom: 24px;
+  right: 28px;
+  z-index: 100;
+  transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease;
+}
+
+.remote-body {
+  width: 175px;
+  background: linear-gradient(180deg, #22242c 0%, #16171d 60%, #101116 100%);
+  border-radius: 20px;
+  padding: 16px 12px 20px;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.85),
+    0 8px 16px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.7);
+  border: 2px solid #333644;
+  user-select: none;
+}
+
+/* Remote Top Infrared Transmitter Window */
+.remote-ir-window {
+  width: 32px;
+  height: 6px;
+  background: #3c0909;
+  border-radius: 3px 3px 0 0;
+  margin: -16px auto 12px;
+  box-shadow: inset 0 0 3px #ff0000;
+}
+
+/* Remote Brand Plate */
+.remote-plate {
+  font-family: var(--font-telemetry);
+  font-size: 0.62rem;
+  text-align: center;
+  color: #727686;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Tactile Remote Buttons */
+.remote-btn {
+  background: var(--remote-rubber);
+  color: #d8dde6;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-telemetry);
+  font-weight: 700;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 0 #121318, 0 4px 6px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: all 0.08s ease;
+}
+
+.remote-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #121318, 0 1px 2px rgba(0, 0, 0, 0.6);
+  background: var(--remote-rubber-active);
+}
+
+.remote-btn-power {
+  background: var(--remote-red);
+  color: #ffffff;
+  box-shadow: 0 3px 0 #80001a, 0 4px 8px rgba(217, 4, 41, 0.4);
+}
+
+.remote-btn-power:active {
+  background: #a3001f;
+  box-shadow: 0 1px 0 #80001a;
+}
+
+.remote-keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.remote-keypad-btn {
+  height: 32px;
+  font-size: 0.78rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUTS (Desktop, Tablet, Mobile)
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .crt-cabinet {
+    width: 96vw;
+    aspect-ratio: auto;
+    min-height: 85vh;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .crt-hardware-panel {
+    flex-direction: row;
+    width: 100%;
+    padding: 8px 12px;
+    justify-content: space-between;
+  }
+
+  .crt-knob-cluster {
+    flex-direction: row;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .crt-speaker-grille {
+    display: none;
+  }
+
+  .crt-bottom-cluster {
+    flex-direction: row;
+    width: auto;
+    border-top: none;
+    padding-top: 0;
+    gap: 12px;
+  }
+
+  .remote-outer-shell {
+    bottom: 12px;
+    right: 12px;
+    transform-origin: bottom right;
+    scale: 0.9;
+  }
+}
+
+@media (max-width: 600px) {
+  .crt-apparatus-wrapper {
+    padding: 0.5rem 0.25rem 4rem;
+  }
+
+  .crt-cabinet {
+    width: 98vw;
+    border-radius: 16px;
+    padding: 10px;
+    min-height: 84vh;
+  }
+
+  .crt-screen-bezel {
+    border-radius: 12px;
+    padding: 10px;
+  }
+
+  .crt-screen-glass {
+    border-radius: 10px;
+  }
+
+  .remote-outer-shell {
+    bottom: 8px;
+    right: 8px;
+    scale: 0.85;
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .crt-screen-flicker {
+    animation: none !important;
+  }
+  .crt-beam-line {
+    animation: none !important;
+  }
+  .crt-scanlines {
+    display: none !important;
+  }
+  .remote-outer-shell {
+    transition: none !important;
+  }
+}
