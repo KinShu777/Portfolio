@@ -6,6 +6,8 @@ export type CRTIntensity = 'off' | 'low' | 'medium' | 'high';
 
 export type PhosphorTheme = 'color' | 'green' | 'amber' | 'cyan';
 
+export type PhosphorBloom = 'low' | 'medium' | 'high';
+
 export interface ChannelInfo {
   id: ChannelId;
   label: string;

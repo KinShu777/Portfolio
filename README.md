@@ -6,8 +6,14 @@
 
 ## 📺 Concept & Features
 
-- **Vintage Physical CRT Chassis**: Detailed Sony/Trinitron-inspired CRT casing with curved glass reflections, bezel lip, speaker grille, ventilation slots, dual rotary knobs (Channel & Volume/Tuning), and standby/active LED indicator.
-- **Scroll-Triggered Remote Discovery**: When visitors scroll down, a tactile infrared TV remote control smoothly glides into view from below.
+- **Immersive Viewport CRT Television**: The physical CRT television fills essentially the entire browser viewport with authentic 4:3 proportions, thick injection-molded chassis, curved glass reflections, peripheral aged-glass hairline imperfections, speaker grille, ventilation slits, and realistic drop shadows.
+- **Physical TV Hardware Control Panel**: All TV controls are built directly into the CRT cabinet's side panel:
+  - **[ POWER ]**: Tactile power button depressing physically with mechanical switch click and active green / standby red indicator LED.
+  - **CH SELECT [ CH+ ] / [ CH- ]**: Rocker buttons cycling through broadcast channels with instant analog static transients.
+  - **[ VOL / TUNE ]**: Analog rotary knob rotating visibly according to volume level with drag, mouse wheel, and touch support.
+  - **[ MUTE ]**: Physical mute toggle button with a subtle LED indicator.
+  - **[ RADIO ]**: Dedicated hardware button instantly tuning to Channel 03 (Retro FM Radio Deck).
+  - **[ CRT ADJ ]**: Service calibration panel for display adjustment.
 - **Authentic 13-Stage CRT Boot Sequence**:
   1. Mechanical power switch depression.
   2. Synthesized electrical switch click & degauss coil low-frequency thump.
@@ -23,7 +29,11 @@
   - **Channel 03 — Retro FM Radio Deck**: Real frequency tuning dial, station presets, audio visualizer, procedural synth engine, and support for local MP3 playlists.
   - **Channel 04 — SMPTE Test Pattern**: Classic analog broadcast color bars and calibration signals.
 - **Procedural Web Audio Engine**: Zero copyright issues out of the box — synthesizes authentic mechanical clicks, static bursts, tuning squeals, and ambient synth chords via the Web Audio API.
-- **CRT Calibration Controls**: In-TV adjustments for CRT intensity (`LOW`, `MEDIUM`, `HIGH`, `OFF`), phosphor coatings (`Color`, `Green`, `Amber`, `Cyan`), and degaussing.
+- **CRT Calibration Controls**: In-TV adjustments for:
+  - **CRT Intensity**: `LOW`, `MEDIUM`, `HIGH`, `OFF`
+  - **Phosphor Coating**: `Color`, `Green (P1)`, `Amber (P3)`, `Cyan`
+  - **Phosphor Glow / Bloom**: `LOW` (crisp, restrained), `MEDIUM` (subtle authentic phosphor glow - default), `HIGH` (strong luminous bloom)
+  - **Degauss Coil**: Triggers coil thump and raster wobble.
 
 ---
 
@@ -67,8 +77,8 @@ portfolio/
 │       └── projects/              # (Optional) Project screenshots
 └── src/
     ├── main.tsx                   # React root entry
-    ├── App.tsx                    # Master Controller: scroll discovery, power, channels, shortcuts
-    ├── index.css                  # Complete CRT physical chassis, scanlines, glass & remote styles
+    ├── App.tsx                    # Master Controller: TV power, channels, audio, shortcuts
+    ├── index.css                  # Viewport CRT cabinet, hardware controls, phosphor bloom, aged glass
     ├── types/
     │   └── index.ts               # TypeScript data definitions & channel states
     ├── config/
@@ -79,12 +89,10 @@ portfolio/
     │   └── soundEngine.ts         # Procedural Web Audio API sound synthesizer
     └── components/
         ├── CRT/
-        │   ├── CRTFrame.tsx       # Physical television cabinet, vents, knobs, speaker grille, LED
-        │   ├── CRTScreen.tsx      # Curved glass bezel, scanlines, vignette, phosphor reflections
+        │   ├── CRTFrame.tsx       # Physical television cabinet, vents, rotary knobs, hardware panel
+        │   ├── CRTScreen.tsx      # Curved glass bezel, scanlines, aged glass overlay, phosphor bloom
         │   ├── CRTStartupSequence.tsx # 13-stage startup animation sequence
-        │   └── CRTControlsPanel.tsx   # Calibration drawer (intensity, phosphor color, degauss)
-        ├── Remote/
-        │   └── TVRemote.tsx       # Infrared remote with tactile rubber keys, IR LED, 1-9 keypad
+        │   └── CRTControlsPanel.tsx   # Calibration drawer (intensity, phosphor color, bloom, degauss)
         ├── Channels/
         │   ├── PortfolioChannel.tsx      # Channel 01: Main portfolio website
         │   ├── ProjectArchiveChannel.tsx # Channel 02: Dedicated Project Archive
@@ -101,8 +109,7 @@ portfolio/
         │   └── ContactSection.tsx    # Uplink console, copy email, GitHub, LinkedIn
         └── UI/
             ├── RetroIcons.tsx        # Tailored pixel-sharp SVG icons
-            ├── NoiseOverlay.tsx      # Procedural canvas analog RF static generator
-            └── QuickControls.tsx     # Floating accessibility bar & keyboard shortcuts modal
+            └── NoiseOverlay.tsx      # Procedural canvas analog RF static generator
 ```
 
 ---
@@ -131,47 +138,7 @@ The codebase is built with clean, working visual placeholders. Whenever you are 
    public/audio/song03.mp3
    ```
 2. Open [`src/config/radioStations.ts`](file:///c:/Users/aldol/OneDrive/Documents/portfolio/src/config/radioStations.ts).
-3. Customize station frequencies, station names, genres, track titles, and audio source paths:
-   ```ts
-   {
-     frequency: "88.7",
-     name: "Night Drive FM",
-     genre: "Synthwave / Analog Drift",
-     tag: "BROADCAST LATE NIGHT",
-     color: "#ff2a6d",
-     synthPreset: "synthwave",
-     tracks: [
-       {
-         id: "nd-01",
-         title: "Your Song Name",
-         artist: "Your Artist Name",
-         duration: "03:45",
-         src: "/audio/song01.mp3"
-       }
-     ]
-   }
-   ```
-4. *Zero Audio File Fallback*: If you run the site before uploading any audio files, the built-in procedural Web Audio API synthesizer automatically generates soothing retro FM chords in real time so there are never broken audio buttons.
-
----
-
-## ✍️ How to Edit Your Portfolio Information
-
-All personal content is centralized in cleanly structured configuration files with clearly marked placeholders:
-
-1. **Personal Information, Education, Skills, Experience, and Contact**:
-   - Edit [`src/config/portfolioData.ts`](file:///c:/Users/aldol/OneDrive/Documents/portfolio/src/config/portfolioData.ts).
-   - Look for items like:
-     - `[YOUR DEGREE]`
-     - `[YOUR UNIVERSITY]`
-     - `[YOUR ACHIEVEMENT]`
-     - `[YOUR ROLE]`
-     - `[YOUR EMAIL]`
-     - `[YOUR GITHUB]`
-     - `[YOUR LINKEDIN]`
-2. **Project Entries & Case Studies**:
-   - Edit [`src/config/projectsData.ts`](file:///c:/Users/aldol/OneDrive/Documents/portfolio/src/config/projectsData.ts).
-   - Add as many projects as you want; cards and category filter tabs automatically adapt!
+3. Customize station frequencies, station names, genres, track titles, and audio source paths.
 
 ---
 
@@ -186,7 +153,6 @@ All personal content is centralized in cleanly structured configuration files wi
 | `3` | Switch to **Channel 03: Retro FM Radio Deck** |
 | `4` | Switch to **Channel 04: SMPTE Color Test Pattern** |
 | `+` / `-` | Volume Up / Volume Down |
-| `R` | Toggle Physical TV Remote Control visibility |
 | `Space` | Play / Pause Radio Broadcast |
 | `Escape` | Skip Startup Sequence / Close Modals |
 
@@ -197,20 +163,6 @@ All personal content is centralized in cleanly structured configuration files wi
 
 ## 🌐 Deploying to Vercel
 
-This repository is ready for immediate deployment to Vercel:
-
-1. Push this folder to a GitHub repository.
+1. Push this folder to your GitHub repository.
 2. Go to [Vercel](https://vercel.com) and click **"Add New Project"**.
-3. Import your repository.
-4. Settings:
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-   - **Install Command**: `npm install`
-5. Click **Deploy**.
-
----
-
-## 📡 Browser Limitations & Notes
-- Modern browsers require user interaction (e.g. clicking the remote, power button, or scrolling) before playing audio via the Web Audio API or `<audio>` elements. The site is designed around this requirement.
-- Hardware-accelerated CSS filters and canvas elements are utilized for scanlines and static, ensuring consistent 60 FPS performance on desktops, laptops, and mobile devices.
+3. Import your repository and click **Deploy**.

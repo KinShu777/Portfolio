@@ -1,5 +1,5 @@
 import React from 'react';
-import type { CRTIntensity, PhosphorTheme } from '../../types';
+import type { CRTIntensity, PhosphorTheme, PhosphorBloom } from '../../types';
 import { soundEngine } from '../../audio/soundEngine';
 
 interface CRTControlsPanelProps {
@@ -7,6 +7,8 @@ interface CRTControlsPanelProps {
   onIntensityChange: (level: CRTIntensity) => void;
   phosphorTheme: PhosphorTheme;
   onPhosphorChange: (theme: PhosphorTheme) => void;
+  bloom: PhosphorBloom;
+  onBloomChange: (bloom: PhosphorBloom) => void;
   onDegauss: () => void;
   isOpen: boolean;
   onToggle: () => void;
@@ -17,6 +19,8 @@ export const CRTControlsPanel: React.FC<CRTControlsPanelProps> = ({
   onIntensityChange,
   phosphorTheme,
   onPhosphorChange,
+  bloom,
+  onBloomChange,
   onDegauss,
   isOpen,
   onToggle
@@ -126,6 +130,37 @@ export const CRTControlsPanel: React.FC<CRTControlsPanelProps> = ({
                   }}
                 >
                   {p}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Phosphor Glow / Bloom selector */}
+          <div style={{ marginBottom: '10px' }}>
+            <div style={{ fontSize: '0.62rem', color: '#888ea0', marginBottom: '4px' }}>
+              PHOSPHOR GLOW / BLOOM:
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+              {(['low', 'medium', 'high'] as PhosphorBloom[]).map((b) => (
+                <button
+                  key={b}
+                  onClick={() => {
+                    soundEngine.playClick(620);
+                    onBloomChange(b);
+                  }}
+                  style={{
+                    backgroundColor: bloom === b ? '#00e575' : '#222530',
+                    color: bloom === b ? '#0a0d14' : '#a0a6b5',
+                    border: '1px solid #3a3e4e',
+                    borderRadius: '4px',
+                    padding: '3px 0',
+                    fontSize: '0.6rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  {b}
                 </button>
               ))}
             </div>

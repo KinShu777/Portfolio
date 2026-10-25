@@ -4,7 +4,7 @@
 
 :root {
   /* Environment & Room Atmosphere */
-  --room-bg: #090a0d;
+  --room-bg: #07080b;
   --room-ambient: radial-gradient(circle at 50% 30%, #151821 0%, #08090c 75%, #030406 100%);
   --shelf-shadow: 0 45px 80px -20px rgba(0, 0, 0, 0.95), 0 25px 35px -10px rgba(0, 0, 0, 0.8);
 
@@ -43,11 +43,8 @@
   --scanline-color: rgba(0, 0, 0, 0.42);
   --scanline-height: 3px;
 
-  /* Remote Control */
-  --remote-body: #191a20;
-  --remote-rubber: #2d303a;
-  --remote-rubber-active: #18191f;
-  --remote-red: #d90429;
+  /* Bloom Shadow fallback */
+  --crt-bloom-shadow: 0 0 8px var(--phosphor-color-glow);
 }
 
 /* Reset & Base Rules */
@@ -59,12 +56,12 @@
 
 html, body {
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   background-color: var(--room-bg);
   background: var(--room-ambient);
   color: #e0e4eb;
   font-family: var(--font-body);
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -75,37 +72,50 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 }
 
 /* ==========================================================================
-   AUTHENTIC PHYSICAL CRT TELEVISION CHASSIS
+   VIEWPORT COMPOSITION — TV OCCUPIES ESSENTIALLY THE ENTIRE VIEWPORT
    ========================================================================== */
+
+.crt-viewport-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--room-ambient);
+}
 
 .crt-apparatus-wrapper {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem 1rem 3rem;
+  padding: 8px;
   z-index: 10;
+  overflow: hidden;
 }
 
+/* Physical CRT television cabinet filling viewport while preserving 4:3.15 proportions */
 .crt-cabinet {
   position: relative;
-  width: min(94vw, 1060px);
-  max-height: 88vh;
-  aspect-ratio: 4 / 3.15;
+  width: min(98vw, calc(97vh * 1.32));
+  height: min(97vh, calc(98vw / 1.32));
+  max-width: 1750px;
   background: var(--tv-body-gradient);
-  border-radius: 28px;
+  border-radius: 24px;
   box-shadow:
     var(--shelf-shadow),
     0 0 0 2px #323542,
     inset 0 2px 4px rgba(255, 255, 255, 0.15),
     inset 0 -8px 16px rgba(0, 0, 0, 0.85);
   display: grid;
-  grid-template-columns: 1fr 140px;
-  padding: 24px;
-  gap: 20px;
+  grid-template-columns: 1fr 148px;
+  padding: 18px 20px;
+  gap: 16px;
   user-select: none;
   transition: box-shadow 0.6s ease;
 }
@@ -114,7 +124,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 28px;
+  border-radius: 24px;
   background: var(--tv-plastic-texture);
   pointer-events: none;
   opacity: 0.85;
@@ -123,10 +133,10 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 /* Top Ventilation Grille */
 .crt-cabinet-vents {
   position: absolute;
-  top: 6px;
+  top: 5px;
   left: 20%;
   right: 20%;
-  height: 10px;
+  height: 8px;
   display: flex;
   gap: 5px;
   justify-content: center;
@@ -141,13 +151,13 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Realistic Television Legs / Base Stand */
+/* Base Stand / Feet */
 .crt-stand {
   position: absolute;
-  bottom: -18px;
+  bottom: -14px;
   left: 10%;
   right: 10%;
-  height: 18px;
+  height: 14px;
   display: flex;
   justify-content: space-between;
   pointer-events: none;
@@ -171,12 +181,12 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   width: 100%;
   height: 100%;
   background: linear-gradient(180deg, #111217 0%, #0a0b0e 100%);
-  border-radius: 22px;
+  border-radius: 20px;
   box-shadow:
     inset 0 0 0 3px #1f212a,
     inset 0 8px 16px rgba(0, 0, 0, 0.9),
     0 2px 4px rgba(255, 255, 255, 0.05);
-  padding: 18px;
+  padding: 14px;
   display: flex;
   overflow: hidden;
 }
@@ -185,7 +195,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 18px;
+  border-radius: 16px;
   background-color: var(--crt-glass-dark);
   box-shadow: var(--crt-bezel-lip);
   overflow: hidden;
@@ -199,11 +209,22 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   inset: 0;
   pointer-events: none;
   z-index: 50;
-  border-radius: 18px;
+  border-radius: 16px;
   background:
     var(--crt-glass-reflection),
     var(--crt-glass-curvature);
   box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.7);
+}
+
+/* Subtle Aged CRT Glass Overlay (imperfections along periphery only) */
+.crt-aged-glass-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 51;
+  border-radius: 16px;
 }
 
 /* Moving Scanlines */
@@ -248,6 +269,22 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   text-shadow: 0 0 14px var(--phosphor-color-glow), 0 0 2px rgba(255, 255, 255, 0.5);
 }
 
+/* Phosphor Bloom / Glow Calibration Levels */
+.crt-bloom-low {
+  text-shadow: 0 0 3px var(--phosphor-color-glow);
+  --crt-bloom-shadow: 0 0 4px var(--phosphor-color-glow);
+}
+
+.crt-bloom-medium {
+  text-shadow: 0 0 8px var(--phosphor-color-glow);
+  --crt-bloom-shadow: 0 0 8px var(--phosphor-color-glow);
+}
+
+.crt-bloom-high {
+  text-shadow: 0 0 16px var(--phosphor-color-glow), 0 0 4px rgba(255, 255, 255, 0.4);
+  --crt-bloom-shadow: 0 0 16px var(--phosphor-color-glow), 0 0 6px rgba(0, 255, 170, 0.5);
+}
+
 /* Barrel Curvature Simulation */
 .crt-screen-curved {
   transform: scale(0.992);
@@ -267,7 +304,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 }
 
 /* ==========================================================================
-   TV HARDWARE SIDE PANEL (Physical Knobs, Grille, Power LED)
+   TV HARDWARE SIDE PANEL (Complete Physical Interface)
    ========================================================================== */
 
 .crt-hardware-panel {
@@ -275,11 +312,12 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 4px 6px;
+  padding: 10px 4px 8px;
   background: linear-gradient(180deg, #17181f 0%, #121318 100%);
   border-radius: 14px;
   box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.05), inset 0 -4px 8px rgba(0, 0, 0, 0.6);
   border: 1px solid #23252f;
+  height: 100%;
 }
 
 /* Brand Emblem */
@@ -293,7 +331,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   width: 100%;
   justify-content: center;
@@ -307,22 +345,119 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   display: inline-block;
 }
 
-/* Rotary Knobs */
-.crt-knob-cluster {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-  margin: 8px 0;
-}
-
-.crt-rotary-knob-wrap {
+/* Side Panel Section grouping */
+.crt-panel-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  width: 100%;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+.crt-panel-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 88%;
+  font-family: var(--font-telemetry);
+  font-size: 0.62rem;
+  color: #727686;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.crt-channel-badge-mini {
+  background-color: #0c2018;
+  border: 1px solid #00e575;
+  color: #00ffaa;
+  font-family: var(--font-badge);
+  font-size: 0.52rem;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* Channel Rocker (CH+ / CH-) */
+.crt-channel-rocker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 90%;
+}
+
+/* Physical Hardware Buttons */
+.crt-hardware-btn {
+  background: linear-gradient(180deg, #2c2f3a 0%, #1c1d25 100%);
+  color: #d1d5db;
+  border: 1px solid #3c4050;
+  border-radius: 5px;
+  font-family: var(--font-telemetry);
+  font-size: 0.64rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.12);
+  transition: all 0.08s ease;
+}
+
+.crt-hardware-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.8), inset 0 2px 4px rgba(0,0,0,0.6);
+  background: #14151a;
+}
+
+.crt-button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 90%;
+}
+
+.crt-btn-square {
+  width: 100%;
+  height: 30px;
+}
+
+.crt-btn-with-led {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+}
+
+.crt-subtle-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #2b1114;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.crt-subtle-indicator.active {
+  background-color: #ff3366;
+  box-shadow: 0 0 6px #ff3366, 0 0 10px rgba(255, 51, 102, 0.6);
+}
+
+.active-radio {
+  border-color: #ff2a6d !important;
+  color: #ffffff !important;
+  background: linear-gradient(180deg, #441424 0%, #200810 100%) !important;
+  box-shadow: 0 0 8px rgba(255, 42, 109, 0.4) !important;
+}
+
+.active-mute {
+  border-color: #ff3366 !important;
+  color: #ff3366 !important;
+}
+
+/* Analog Rotary Volume Knob */
 .crt-knob-label {
   font-family: var(--font-telemetry);
   font-size: 0.62rem;
@@ -338,12 +473,17 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   background: radial-gradient(circle at 35% 35%, #343743 0%, #181920 70%, #0d0e12 100%);
   border: 2px solid #282a35;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), inset 0 2px 3px rgba(255, 255, 255, 0.15);
-  cursor: pointer;
+  cursor: grab;
   position: relative;
-  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.08s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
+}
+
+.crt-rotary-knob:active {
+  cursor: grabbing;
 }
 
 .crt-rotary-knob::after {
@@ -357,21 +497,21 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   box-shadow: 0 0 4px #00ff88;
 }
 
-.crt-rotary-knob:hover {
-  transform: rotate(25deg);
-}
-
-.crt-rotary-knob:active {
-  transform: scale(0.96) rotate(35deg);
+.crt-knob-readout {
+  font-family: var(--font-telemetry);
+  font-size: 0.58rem;
+  color: #00ffaa;
+  letter-spacing: 0.05em;
+  margin-top: 1px;
 }
 
 /* Speaker Grille */
 .crt-speaker-grille {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   width: 80%;
-  padding: 10px 0;
+  padding: 6px 0;
 }
 
 .crt-speaker-slit {
@@ -382,14 +522,14 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* TV Power Button & Indicator cluster */
+/* Bottom Cluster: Power Button & LED */
 .crt-bottom-cluster {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
-  padding-top: 10px;
+  padding-top: 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -427,7 +567,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 
 /* Physical Mechanical Power Button on TV */
 .crt-tv-power-btn {
-  width: 48px;
+  width: 88%;
   height: 30px;
   background: linear-gradient(180deg, #383a45 0%, #1e2028 100%);
   border: 1px solid #4a4d5c;
@@ -439,7 +579,7 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
   cursor: pointer;
   box-shadow: 0 3px 6px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.2);
   transition: all 0.1s ease;
@@ -653,127 +793,44 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
 }
 
 /* ==========================================================================
-   PHYSICAL VINTAGE TV REMOTE CONTROL
-   ========================================================================== */
-
-.remote-outer-shell {
-  position: fixed;
-  bottom: 24px;
-  right: 28px;
-  z-index: 100;
-  transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.5s ease;
-}
-
-.remote-body {
-  width: 175px;
-  background: linear-gradient(180deg, #22242c 0%, #16171d 60%, #101116 100%);
-  border-radius: 20px;
-  padding: 16px 12px 20px;
-  box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.85),
-    0 8px 16px rgba(0, 0, 0, 0.6),
-    inset 0 1px 1px rgba(255, 255, 255, 0.2),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.7);
-  border: 2px solid #333644;
-  user-select: none;
-}
-
-/* Remote Top Infrared Transmitter Window */
-.remote-ir-window {
-  width: 32px;
-  height: 6px;
-  background: #3c0909;
-  border-radius: 3px 3px 0 0;
-  margin: -16px auto 12px;
-  box-shadow: inset 0 0 3px #ff0000;
-}
-
-/* Remote Brand Plate */
-.remote-plate {
-  font-family: var(--font-telemetry);
-  font-size: 0.62rem;
-  text-align: center;
-  color: #727686;
-  letter-spacing: 0.15em;
-  font-weight: 700;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-/* Tactile Remote Buttons */
-.remote-btn {
-  background: var(--remote-rubber);
-  color: #d8dde6;
-  border: none;
-  border-radius: 6px;
-  font-family: var(--font-telemetry);
-  font-weight: 700;
-  font-size: 0.72rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 0 #121318, 0 4px 6px rgba(0, 0, 0, 0.5);
-  cursor: pointer;
-  transition: all 0.08s ease;
-}
-
-.remote-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #121318, 0 1px 2px rgba(0, 0, 0, 0.6);
-  background: var(--remote-rubber-active);
-}
-
-.remote-btn-power {
-  background: var(--remote-red);
-  color: #ffffff;
-  box-shadow: 0 3px 0 #80001a, 0 4px 8px rgba(217, 4, 41, 0.4);
-}
-
-.remote-btn-power:active {
-  background: #a3001f;
-  box-shadow: 0 1px 0 #80001a;
-}
-
-.remote-keypad-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin: 10px 0;
-}
-
-.remote-keypad-btn {
-  height: 32px;
-  font-size: 0.78rem;
-}
-
-/* ==========================================================================
    RESPONSIVE LAYOUTS (Desktop, Tablet, Mobile)
    ========================================================================== */
 
 @media (max-width: 900px) {
+  .crt-apparatus-wrapper {
+    padding: 4px;
+  }
+
   .crt-cabinet {
-    width: 96vw;
-    aspect-ratio: auto;
-    min-height: 85vh;
+    width: 98vw;
+    height: 98vh;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
-    padding: 16px;
-    gap: 12px;
+    padding: 12px;
+    gap: 8px;
+    border-radius: 16px;
   }
 
   .crt-hardware-panel {
     flex-direction: row;
     width: 100%;
-    padding: 8px 12px;
+    padding: 6px 10px;
     justify-content: space-between;
+    height: auto;
   }
 
-  .crt-knob-cluster {
+  .crt-panel-section {
     flex-direction: row;
-    gap: 14px;
-    margin: 0;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0 6px;
+    width: auto;
+    gap: 6px;
+  }
+
+  .crt-channel-rocker {
+    width: auto;
+    gap: 4px;
   }
 
   .crt-speaker-grille {
@@ -785,42 +842,26 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
     width: auto;
     border-top: none;
     padding-top: 0;
-    gap: 12px;
-  }
-
-  .remote-outer-shell {
-    bottom: 12px;
-    right: 12px;
-    transform-origin: bottom right;
-    scale: 0.9;
+    gap: 8px;
   }
 }
 
 @media (max-width: 600px) {
-  .crt-apparatus-wrapper {
-    padding: 0.5rem 0.25rem 4rem;
-  }
-
   .crt-cabinet {
-    width: 98vw;
-    border-radius: 16px;
-    padding: 10px;
-    min-height: 84vh;
+    padding: 8px;
   }
 
   .crt-screen-bezel {
     border-radius: 12px;
-    padding: 10px;
+    padding: 8px;
   }
 
   .crt-screen-glass {
     border-radius: 10px;
   }
 
-  .remote-outer-shell {
-    bottom: 8px;
-    right: 8px;
-    scale: 0.85;
+  .crt-panel-section-label {
+    display: none;
   }
 }
 
@@ -834,8 +875,5 @@ button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
   }
   .crt-scanlines {
     display: none !important;
-  }
-  .remote-outer-shell {
-    transition: none !important;
   }
 }

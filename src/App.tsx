@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { PowerState, ChannelId, CRTIntensity, PhosphorTheme } from './types';
+import type { PowerState, ChannelId, CRTIntensity, PhosphorTheme, PhosphorBloom } from './types';
 import { CRTFrame } from './components/CRT/CRTFrame';
 import { CRTScreen } from './components/CRT/CRTScreen';
-import { TVRemote } from './components/Remote/TVRemote';
-import { QuickControls } from './components/UI/QuickControls';
 import { PortfolioChannel } from './components/Channels/PortfolioChannel';
 import { ProjectArchiveChannel } from './components/Channels/ProjectArchiveChannel';
 import { RetroRadioChannel } from './components/Channels/RetroRadioChannel';
@@ -12,41 +10,21 @@ import { soundEngine } from './audio/soundEngine';
 
 export function App() {
   const [powerState, setPowerState] = useState<PowerState>('off');
-  const [isRemoteVisible, setIsRemoteVisible] = useState<boolean>(false);
   const [activeChannel, setActiveChannel] = useState<ChannelId>(1);
   const [crtIntensity, setCrtIntensity] = useState<CRTIntensity>('medium');
   const [phosphorTheme, setPhosphorTheme] = useState<PhosphorTheme>('color');
+  const [bloom, setBloom] = useState<PhosphorBloom>('medium');
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [volume, setVolume] = useState<number>(0.7);
   const [isDegaussing, setIsDegaussing] = useState<boolean>(false);
 
-  // Phase 2: Scroll detection to discover the remote
+  // Sync initial soundEngine values
   useEffect(() => {
-    const handleScrollOrWheel = () => {
-      // Any scroll action or touch move reveals the remote!
-      if (!isRemoteVisible) {
-        setIsRemoteVisible(true);
-        soundEngine.playClick(450);
-      }
-    };
+    setIsMuted(soundEngine.getIsMuted());
+    setVolume(soundEngine.getVolume());
+  }, []);
 
-    window.addEventListener('scroll', handleScrollOrWheel, { passive: true });
-    window.addEventListener('wheel', handleScrollOrWheel, { passive: true });
-    window.addEventListener('touchmove', handleScrollOrWheel, { passive: true });
-
-    // Also auto-hint after 4 seconds if user has not scrolled
-    const hintTimer = setTimeout(() => {
-      setIsRemoteVisible(true);
-    }, 4500);
-
-    return () => {
-      window.removeEventListener('scroll', handleScrollOrWheel);
-      window.removeEventListener('wheel', handleScrollOrWheel);
-      window.removeEventListener('touchmove', handleScrollOrWheel);
-      clearTimeout(hintTimer);
-    };
-  }, [isRemoteVisible]);
-
-  // Power switch handler
+  // Power switch handler (Physical TV Power Button)
   const handleTogglePower = useCallback(() => {
     if (powerState === 'off') {
       soundEngine.playCRTPowerOn();
@@ -75,15 +53,19 @@ export function App() {
   }, [activeChannel, handleChannelChange]);
 
   // Volume controls
-  const handleVolumeUp = useCallback(() => {
-    const newVol = Math.min(1, soundEngine.getVolume() + 0.1);
-    soundEngine.setVolume(newVol);
+  const handleVolumeChange = useCallback((newVol: number) => {
+    const clamped = Math.max(0, Math.min(1, newVol));
+    setVolume(clamped);
+    soundEngine.setVolume(clamped);
   }, []);
 
+  const handleVolumeUp = useCallback(() => {
+    handleVolumeChange(volume + 0.08);
+  }, [volume, handleVolumeChange]);
+
   const handleVolumeDown = useCallback(() => {
-    const newVol = Math.max(0, soundEngine.getVolume() - 0.1);
-    soundEngine.setVolume(newVol);
-  }, []);
+    handleVolumeChange(volume - 0.08);
+  }, [volume, handleVolumeChange]);
 
   const handleToggleMute = useCallback(() => {
     const muted = soundEngine.toggleMute();
@@ -97,7 +79,7 @@ export function App() {
     setTimeout(() => setIsDegaussing(false), 900);
   }, []);
 
-  // Keyboard navigation shortcuts
+  // Keyboard navigation shortcuts (preserved for accessibility)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
@@ -121,8 +103,6 @@ export function App() {
         handleVolumeUp();
       } else if (key === '-' || key === '_') {
         handleVolumeDown();
-      } else if (key === 'R') {
-        setIsRemoteVisible(prev => !prev);
       } else if (key === ' ') {
         e.preventDefault();
         if (soundEngine.isRadioActive()) {
@@ -138,27 +118,25 @@ export function App() {
   }, [handleTogglePower, handleToggleMute, handleChannelChange, handleVolumeUp, handleVolumeDown]);
 
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', width: '100%', overflow: 'hidden' }}>
-      {/* Quick accessibility bar */}
-      <QuickControls
-        powerState={powerState}
-        isMuted={isMuted}
-        onTogglePower={handleTogglePower}
-        onToggleMute={handleToggleMute}
-        onToggleRemote={() => setIsRemoteVisible(!isRemoteVisible)}
-        isRemoteVisible={isRemoteVisible}
-      />
-
-      {/* Main Physical CRT television */}
+    <div className="crt-viewport-container">
+      {/* Physical CRT television occupying essentially the entire viewport */}
       <CRTFrame
         powerState={powerState}
+        activeChannel={activeChannel}
+        isMuted={isMuted}
+        volume={volume}
         onTogglePower={handleTogglePower}
+        onChannelChange={handleChannelChange}
         onChannelNext={handleChannelNext}
-        onVolumeRotate={handleVolumeUp}
+        onChannelPrev={handleChannelPrev}
+        onVolumeChange={handleVolumeChange}
+        onToggleMute={handleToggleMute}
         crtIntensity={crtIntensity}
         onIntensityChange={setCrtIntensity}
         phosphorTheme={phosphorTheme}
         onPhosphorChange={setPhosphorTheme}
+        bloom={bloom}
+        onBloomChange={setBloom}
         onDegauss={handleDegauss}
       >
         <CRTScreen
@@ -166,6 +144,7 @@ export function App() {
           activeChannel={activeChannel}
           crtIntensity={crtIntensity}
           phosphorTheme={phosphorTheme}
+          bloom={bloom}
           isDegaussing={isDegaussing}
           onStartupComplete={() => setPowerState('on')}
           onPowerClick={handleTogglePower}
@@ -185,47 +164,6 @@ export function App() {
           )}
         </CRTScreen>
       </CRTFrame>
-
-      {/* Scroll Discovery Indicator (when remote is hidden) */}
-      {!isRemoteVisible && powerState === 'off' && (
-        <div
-          onClick={() => setIsRemoteVisible(true)}
-          style={{
-            position: 'fixed',
-            bottom: '24px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: '#8be9c8',
-            fontFamily: 'var(--font-telemetry)',
-            fontSize: '0.75rem',
-            letterSpacing: '0.12em',
-            backgroundColor: 'rgba(10, 15, 20, 0.85)',
-            border: '1px solid rgba(0, 255, 170, 0.3)',
-            padding: '6px 14px',
-            borderRadius: '20px',
-            cursor: 'pointer',
-            zIndex: 60,
-            animation: 'prompt-flicker 2s infinite'
-          }}
-        >
-          ▼ SCROLL DOWN TO DISCOVER THE TV REMOTE
-        </div>
-      )}
-
-      {/* Physical TV Remote Control */}
-      <TVRemote
-        isVisible={isRemoteVisible}
-        powerState={powerState}
-        activeChannel={activeChannel}
-        isMuted={isMuted}
-        onTogglePower={handleTogglePower}
-        onChannelChange={handleChannelChange}
-        onChannelNext={handleChannelNext}
-        onChannelPrev={handleChannelPrev}
-        onVolumeUp={handleVolumeUp}
-        onVolumeDown={handleVolumeDown}
-        onToggleMute={handleToggleMute}
-      />
     </div>
   );
 }

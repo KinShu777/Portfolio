@@ -1,5 +1,5 @@
 import React from 'react';
-import type { PowerState, ChannelId, CRTIntensity, PhosphorTheme } from '../../types';
+import type { PowerState, ChannelId, CRTIntensity, PhosphorTheme, PhosphorBloom } from '../../types';
 import { CRTStartupSequence } from './CRTStartupSequence';
 import { NoiseOverlay } from '../UI/NoiseOverlay';
 
@@ -8,6 +8,7 @@ interface CRTScreenProps {
   activeChannel: ChannelId;
   crtIntensity: CRTIntensity;
   phosphorTheme: PhosphorTheme;
+  bloom: PhosphorBloom;
   isDegaussing: boolean;
   onStartupComplete: () => void;
   onPowerClick: () => void;
@@ -18,6 +19,7 @@ export const CRTScreen: React.FC<CRTScreenProps> = ({
   powerState,
   crtIntensity,
   phosphorTheme,
+  bloom,
   isDegaussing,
   onStartupComplete,
   onPowerClick,
@@ -48,6 +50,40 @@ export const CRTScreen: React.FC<CRTScreenProps> = ({
       <div className={`crt-screen-glass crt-intensity-${crtIntensity}`}>
         {/* Curvature & ambient room reflections */}
         <div className="crt-glass-overlay" aria-hidden="true" />
+
+        {/* Subtle aged CRT glass imperfections (periphery hairline scratches, micro-dust) */}
+        <svg
+          className="crt-aged-glass-overlay"
+          viewBox="0 0 1000 750"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          {/* Top-left corner micro hairline scratch */}
+          <path d="M 35,45 Q 65,38 95,58" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" fill="none" />
+          <path d="M 28,60 Q 42,75 52,98" stroke="rgba(255,255,255,0.11)" strokeWidth="0.5" fill="none" />
+
+          {/* Top-right corner hairline */}
+          <path d="M 940,42 Q 960,60 972,85" stroke="rgba(255,255,255,0.13)" strokeWidth="0.6" fill="none" />
+          <path d="M 915,35 Q 945,32 965,48" stroke="rgba(255,255,255,0.10)" strokeWidth="0.5" fill="none" />
+
+          {/* Bottom-left corner bezel stress hairline */}
+          <path d="M 32,710 Q 55,690 78,715" stroke="rgba(255,255,255,0.14)" strokeWidth="0.6" fill="none" />
+          <path d="M 45,725 Q 70,720 90,732" stroke="rgba(255,255,255,0.10)" strokeWidth="0.5" fill="none" />
+
+          {/* Bottom-right corner subtle hairline */}
+          <path d="M 950,710 Q 968,685 978,665" stroke="rgba(255,255,255,0.13)" strokeWidth="0.6" fill="none" />
+          <path d="M 920,728 Q 942,718 962,724" stroke="rgba(255,255,255,0.11)" strokeWidth="0.5" fill="none" />
+
+          {/* Extremely sparse microscopic dust particles along top and bottom edges (center remains completely clean) */}
+          <circle cx="85" cy="30" r="0.8" fill="rgba(255,255,255,0.18)" />
+          <circle cx="160" cy="22" r="0.6" fill="rgba(255,255,255,0.14)" />
+          <circle cx="840" cy="25" r="0.7" fill="rgba(255,255,255,0.16)" />
+          <circle cx="915" cy="70" r="0.6" fill="rgba(255,255,255,0.15)" />
+          <circle cx="70" cy="680" r="0.7" fill="rgba(255,255,255,0.15)" />
+          <circle cx="120" cy="728" r="0.8" fill="rgba(255,255,255,0.16)" />
+          <circle cx="880" cy="725" r="0.6" fill="rgba(255,255,255,0.14)" />
+          <circle cx="935" cy="690" r="0.7" fill="rgba(255,255,255,0.18)" />
+        </svg>
 
         {/* Scanlines layer */}
         {crtIntensity !== 'off' && (
@@ -86,7 +122,7 @@ export const CRTScreen: React.FC<CRTScreenProps> = ({
               letterSpacing: '0.12em',
               marginTop: '0.8rem'
             }}>
-              [USE REMOTE CONTROL OR TV PANEL]
+              [USE TV HARDWARE PANEL OR CLICK SCREEN]
             </div>
           </div>
         )}
@@ -97,7 +133,7 @@ export const CRTScreen: React.FC<CRTScreenProps> = ({
 
         {powerState === 'on' && (
           <div
-            className={`crt-screen-curved crt-phosphor-glow-${crtIntensity}`}
+            className={`crt-screen-curved crt-phosphor-glow-${crtIntensity} crt-bloom-${bloom}`}
             style={{
               width: '100%',
               height: '100%',
